@@ -7,6 +7,8 @@ public class PreferenceManager {
 
     public static final int PIN_MAX_COUNT = 4;
 
+    public static final int PROFILE_LIST_STEP = 20;
+
     public static final String PIN_KEY = "pin";
 
     public static final String USER_ID = "userId";
@@ -17,7 +19,7 @@ public class PreferenceManager {
 
     public static final String PREFERENCES_NAME = "rebuild_preference";
 
-    public static final String UPLOAD_URL = "http://10.0.102.59/Upload_Personal/Photo/";
+    public static final String UPLOAD_URL = "http://10.0.102.59";
 
     public static final int HTTP_METHOD_POST = 1;
 

@@ -1,33 +1,39 @@
 package com.example.bizmekatalk.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.loader.content.AsyncTaskLoader;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.adapter.ProfileListAdapter;
 import com.example.bizmekatalk.items.ProfileItem;
+import com.example.bizmekatalk.utils.HttpRequest;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity {
 
-    List<ProfileItem> profileItems = new Vector<ProfileItem>();
+    private ListView profile_list;
+    private List<ProfileItem> allItems = new Vector<ProfileItem>();
+    private ProfileListAdapter adapter;
+    private boolean lastitemVisibleFlag = false;
+    private int currentItemCount=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,13 +59,92 @@ public class MainActivity extends AppCompatActivity {
         headerMap.put("key",keyJson.toString());
         int method = PreferenceManager.HTTP_METHOD_POST;
 
-        final ListView profile_list = findViewById(R.id.profile_list);
-        final ProfileListAdapter adapter = new ProfileListAdapter(this);
-        adapter.updateItems(url,headerMap,bodyJson,method);
+        profile_list = findViewById(R.id.profile_list);
+        profile_list.setOnScrollListener(new ListView.OnScrollListener(){
+
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastitemVisibleFlag) {
+                    Log.i("jay.MainActivity","스크롤의 끝 "+currentItemCount);
+                    int i =0;
+                    while(adapter.getCount()<allItems.size()&&i<PreferenceManager.PROFILE_LIST_STEP){
+                        adapter.updateItems(allItems.get(currentItemCount));
+                        currentItemCount++;
+                        i++;
+                    }
+                    adapter.notifyDataSetChanged();
+                    //데이터 로드
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                //Flag 변경
+                lastitemVisibleFlag = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
+            }
+        });
+
+        adapter = new ProfileListAdapter(this);
+        getAllItems(url,headerMap,bodyJson,method);
+        //adapter.updateItems(allItems);
+        //adapter.notifyDataSetChanged();
         profile_list.setAdapter(adapter);
-
-
     }
 
+    public class ProfileListAsyncTask extends AsyncTask<HttpRequest,Void, Response> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Response doInBackground(HttpRequest... httpRequests) {
+            Response response=null;
+            try {
+                response=httpRequests[0].post();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(Response response) {
+            //onPostExecute에서 item 업데이트
+            try {
+                JSONArray jsonArr = new JSONArray(response.body().string());
+                Log.i("jay.ProfileListAdapter","arr_length : "+jsonArr.length());
+                for(int i=0;i<jsonArr.length();i++){
+                    ProfileItem item = new ProfileItem();
+                    String profileImage = jsonArr.getJSONObject(i).getString("profileimage");
+                    String profileImgUrl = PreferenceManager.UPLOAD_URL + profileImage;
+                    item.setProfileImageUrl(profileImgUrl);
+                    item.setName(jsonArr.getJSONObject(i).getString("name"));
+                    item.setPosition(jsonArr.getJSONObject(i).getString("position"));
+                    item.setJob(jsonArr.getJSONObject(i).getString("job"));
+                    allItems.add(item);
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+            int i=0;
+            while(adapter.getCount()<allItems.size()&&i<PreferenceManager.PROFILE_LIST_STEP){
+                adapter.updateItems(allItems.get(i));
+                i++;
+            }
+            currentItemCount=i;
+            //모든 아이템 가져오기
+
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    public void getAllItems(String url, Map<String, String> headerMap, JSONObject bodyJson, int method){
+        //request 설정
+        HttpRequest httpRequest = new HttpRequest(url,headerMap,bodyJson,method);
+        //request 보내기
+        new ProfileListAsyncTask().execute(httpRequest);
+    }
 
 }

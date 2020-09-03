@@ -1,7 +1,10 @@
 package com.example.bizmekatalk.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +13,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.items.ProfileItem;
 import com.example.bizmekatalk.utils.HttpRequest;
@@ -21,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -31,23 +41,22 @@ import okhttp3.Response;
 public class ProfileListAdapter extends BaseAdapter {
 
     private Context context;
-    private List<ProfileItem> items = new Vector<ProfileItem>();
+
     private int layoutResId;
+
+    private List<ProfileItem> items = new Vector<ProfileItem>();
+
 
     public ProfileListAdapter(Context context) {
         this.context = context;
     }
-
-    public ProfileListAdapter(Context context, int layoutResId) {
-        this(context);
-        this.layoutResId = layoutResId;
+    public ProfileListAdapter(Context context, List<ProfileItem> items) {
+        this.context = context;
+        this.items = items;
     }
 
-    public void updateItems(String url, Map<String, String> headerMap, JSONObject bodyJson, int method){
-        //request 설정
-        HttpRequest httpRequest = new HttpRequest(url,headerMap,bodyJson,method);
-        //request 보내기
-        new ProfileListAsyncTask().execute(httpRequest);
+    public void updateItems(ProfileItem item){
+        this.items.add(item);
     }
 
     @Override
@@ -74,11 +83,36 @@ public class ProfileListAdapter extends BaseAdapter {
             itemView=inflater.inflate(R.layout.profile_item,null);
             //itemView=inflater.inflate(layoutResId,null);
         }
-        ImageView itemProfileImage = itemView.findViewById(R.id.itemProfileImage);
+        final ImageView itemProfileImage = itemView.findViewById(R.id.itemProfileImage);
         TextView itemName = itemView.findViewById(R.id.itemName);
         TextView itemPosition = itemView.findViewById(R.id.itemPosition);
         TextView itemJob = itemView.findViewById(R.id.itemJob);
-        Glide.with(context).load(items.get(position).getProfileImageUrl()).transform(new CenterCrop()).into(itemProfileImage);
+        String imgUrl = items.get(position).getProfileImageUrl();
+        Log.i("jay.ProfileListAdapter","imgUrl "+imgUrl);
+
+        final Handler handler = new Handler(Looper.myLooper());
+        Glide.with(context).load(imgUrl).
+                listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        Log.i("jay.ProfileListAdapter","image_fail");
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Glide.with(context).load(R.drawable.user_profile_icon).transform(new CenterCrop()).into(itemProfileImage);
+                            }
+                        });
+                        return false;
+                    }
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        return false;
+                    }
+                }).
+                transform(new CenterCrop()).into(itemProfileImage);
+
+
+
         itemName.setText(items.get(position).getName());
         itemPosition.setText(items.get(position).getPosition());
         itemJob.setText(items.get(position).getJob());
@@ -86,45 +120,5 @@ public class ProfileListAdapter extends BaseAdapter {
         return itemView;
     }
 
-    public class ProfileListAsyncTask extends AsyncTask<HttpRequest,Void, Response> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Response doInBackground(HttpRequest... httpRequests) {
-            Response response=null;
-            try {
-                response=httpRequests[0].post();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(Response response) {
-            //onPostExecute에서 item 업데이트
-            try {
-                JSONArray jsonArr = new JSONArray(response.body().string());
-                Log.i("jay.ProfileListAdapter","arr_length : "+jsonArr.length());
-                for(int i=0;i<jsonArr.length();i++){
-                    ProfileItem item = new ProfileItem();
-                    String profileImage = jsonArr.getJSONObject(i).getString("profileimage");
-                    String profileImgUrl = PreferenceManager.UPLOAD_URL + jsonArr.getJSONObject(i).getString("profileimage");
-                    item.setProfileImageUrl(profileImgUrl);
-                    item.setName(jsonArr.getJSONObject(i).getString("name"));
-                    item.setPosition(jsonArr.getJSONObject(i).getString("position"));
-                    item.setJob(jsonArr.getJSONObject(i).getString("job"));
-                    items.add(item);
-
-                }
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-            notifyDataSetChanged();
-        }
-    }
 }
