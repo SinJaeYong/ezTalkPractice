@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.LoginActivity"
+
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/loginLayout"
+        >
+        <LinearLayout
+            android:id="@+id/loginImgLayout"
+            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:src="@drawable/loginlogo"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/loginTextLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            >
+            <EditText
+                android:gravity="center|left"
+                android:background="@drawable/text_outline"
+                android:id="@+id/userIdEdit"
+                android:paddingLeft="50px"
+                android:layout_width="@dimen/login_width"
+                android:layout_height="@dimen/login_height"
+                android:inputType="text"
+                android:hint="아이디"
+                android:textSize="15sp"
+                />
+            <EditText
+                android:gravity="center|left"
+                android:background="@drawable/text_outline"
+                android:id="@+id/userPwdEdit"
+                android:paddingLeft="50px"
+                android:layout_width="@dimen/login_width"
+                android:layout_height="@dimen/login_height"
+                android:inputType="textPassword"
+                android:hint="비밀번호"
+                android:textSize="15sp"
+                />
+            <EditText
+                android:gravity="center|left"
+                android:background="@drawable/text_outline"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/compIdEdit"
+                android:paddingLeft="50px"
+                android:layout_width="@dimen/login_width"
+                android:layout_height="@dimen/login_height"
+                android:inputType="textPassword"
+                android:imeOptions="actionDone"
+                android:hint="회사아이디"
+                android:textSize="15sp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            >
+            <Button
+                android:id="@+id/loginBtn"
+                android:layout_width="@dimen/login_width"
+                android:layout_height="@dimen/login_height"
+                android:background="@drawable/login_button"
+                android:text="로그인"
+                android:textColor="#FFFFFF"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="고객센터 : 080-1234-567"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

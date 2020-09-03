@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/round_rectangle_1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            >
+            <TextView
+                android:id="@+id/alert_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:text="커스텀 다이얼로그"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            >
+
+            <Button
+                android:id="@+id/alert_cancel_button"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="취소"
+                android:textColor="#ffffff"
+                android:layout_marginRight="30dp"
+                android:textSize="14sp"
+                android:visibility="gone"
+                android:background="@drawable/round_rectangle_2"/>
+
+            <Button
+                android:id="@+id/alert_ok_button"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="확인"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
+                android:background="@drawable/round_rectangle_2"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

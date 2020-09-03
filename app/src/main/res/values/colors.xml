@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="pin_button">#A4A4A4</color>
+    <color name="pin_button_pressed">#58ACFA</color>
+    <color name="kaoni_blue">#0054FF</color>
+    <color name="login_button">#2E64FE</color>
+    <color name="login_button_pressed">#819FF7</color>
+</resources>
