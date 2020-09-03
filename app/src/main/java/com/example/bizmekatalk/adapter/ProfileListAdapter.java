@@ -88,14 +88,13 @@ public class ProfileListAdapter extends BaseAdapter {
         TextView itemPosition = itemView.findViewById(R.id.itemPosition);
         TextView itemJob = itemView.findViewById(R.id.itemJob);
         String imgUrl = items.get(position).getProfileImageUrl();
-        Log.i("jay.ProfileListAdapter","imgUrl "+imgUrl);
+
 
         final Handler handler = new Handler(Looper.myLooper());
         Glide.with(context).load(imgUrl).
                 listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        Log.i("jay.ProfileListAdapter","image_fail");
                         handler.post(new Runnable() {
                             @Override
                             public void run() {

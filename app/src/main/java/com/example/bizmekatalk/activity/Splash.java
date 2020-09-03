@@ -45,7 +45,7 @@ public class Splash extends AppCompatActivity {
         if(handler != null){
             handler.sendEmptyMessageDelayed(0,500);
         }else{
-            Log.i("jay","Splash 오류");
+            Log.i(PreferenceManager.TAG,"Splash 오류");
         }
     }
 }

@@ -52,7 +52,7 @@ public class PinLoginActivity extends AppCompatActivity {
                 pinDots.add((ImageView)pinLinear.findViewWithTag("pinDot"+String.valueOf(i)));
             }
         }else {
-            Log.i("jay","pinDots 생성 오류");
+            Log.i(PreferenceManager.TAG,"pinDots 생성 오류");
         }
 
         if(pinGrid != null){
@@ -68,7 +68,7 @@ public class PinLoginActivity extends AppCompatActivity {
                 pinBtns.add(pin);
             }
         }else {
-            Log.i("jay","pinGrid 생성 오류");
+            Log.i(PreferenceManager.TAG,"pinGrid 생성 오류");
         }
 
 
@@ -85,7 +85,7 @@ public class PinLoginActivity extends AppCompatActivity {
                 }
             });
         }else{
-            Log.i("jay","pinRemove 오류");
+            Log.i(PreferenceManager.TAG,"pinRemove 오류");
         }
 
 
@@ -102,7 +102,7 @@ public class PinLoginActivity extends AppCompatActivity {
                 }
             });
         }else {
-            Log.i("jay","핀로그인에서 로그인 이동 오류");
+            Log.i(PreferenceManager.TAG,"핀로그인에서 로그인 이동 오류");
         }
 
         BaseInterpolator baseInterpolator = new BaseInterpolator() {
@@ -146,7 +146,7 @@ public class PinLoginActivity extends AppCompatActivity {
             finish();
         }else{
             pinLinear.startAnimation(pinDotsAni);
-            Log.i("jay","핀 로그인 입력 오류");
+            Log.i(PreferenceManager.TAG,"핀 로그인 입력 오류");
         }
 
         pinPassList.clear();

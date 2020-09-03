@@ -22,9 +22,9 @@ import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.utils.CustomDialog;
 import com.example.bizmekatalk.utils.PreferenceManager;
 import com.example.bizmekatalk.utils.SoftKeyboard;
-import com.example.bizmekatalk.utils.Validate;
+import com.example.bizmekatalk.utils.Validation;
 
-public class PinActivity extends AppCompatActivity {
+public class PinRegisterActivity extends AppCompatActivity {
     private EditText pinNum;
     private EditText pinNumConf;
     private Button pinUpdateBtn;
@@ -35,7 +35,7 @@ public class PinActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pin);
+        setContentView(R.layout.activity_pin_register);
         getSupportActionBar().hide();
 
         pinNum = findViewById(R.id.pinNum);
@@ -53,7 +53,7 @@ public class PinActivity extends AppCompatActivity {
             });
         }
         else{
-            Log.i("jay","핀 업데이트 오류");
+            Log.i(PreferenceManager.TAG,"핀 업데이트 오류");
         }
 
         if(this.pinNumConf != null){
@@ -64,7 +64,7 @@ public class PinActivity extends AppCompatActivity {
                     return true;
                 }
             });
-        }else{ Log.i("jay","핀 확인 위젯 오류");}
+        }else{ Log.i(PreferenceManager.TAG,"핀 확인 위젯 오류");}
 
 
         final LinearLayout pinLayout = findViewById(R.id.pinLayout);
@@ -109,14 +109,14 @@ public class PinActivity extends AppCompatActivity {
     }
 
     private void moveToMain() {
-        if(Validate.pinValidation(pinNum,pinNumConf)){
-            PreferenceManager.setString(PinActivity.this, PreferenceManager.PIN_KEY, pinNum.getText().toString());
-            Intent intent = new Intent(PinActivity.this, MainActivity.class);
+        if(Validation.validatePin(pinNum,pinNumConf)){
+            PreferenceManager.setString(PinRegisterActivity.this, PreferenceManager.PIN_KEY, pinNum.getText().toString());
+            Intent intent = new Intent(PinRegisterActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
         else{
-            CustomDialog customDialog = new CustomDialog(PinActivity.this);
+            CustomDialog customDialog = new CustomDialog(PinRegisterActivity.this);
             customDialog.callFunction("입력 정보가 올바르지 않습니다.");
         }
     }

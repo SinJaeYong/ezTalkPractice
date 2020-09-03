@@ -33,7 +33,7 @@
             android:windowSoftInputMode="adjustResize"
             />
 
-        <activity android:name=".activity.PinActivity"
+        <activity android:name=".activity.PinRegisterActivity"
             android:windowSoftInputMode="adjustResize"
             />
         <activity android:name=".activity.PinLoginActivity"/>

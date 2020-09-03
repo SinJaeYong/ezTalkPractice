@@ -28,14 +28,14 @@ public class CustomDialog {
         this.context = context;
     }
 
-    // 호출할 다이얼로그 함수를 정의한다.
+    // 호출할 다이얼로그 함수 정의
     public void callFunction(final String message) {
 
-        // 커스텀 다이얼로그를 정의하기위해 Dialog클래스를 생성한다.
+
         final Dialog dlg = new Dialog(context);
-        // 액티비티의 타이틀바를 숨긴다.
+
         dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        // 커스텀 다이얼로그의 레이아웃을 설정한다.
+        // 커스텀 다이얼로그의 레이아웃 설정
         dlg.setContentView(R.layout.custom_dialog);
         dlg.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -43,24 +43,19 @@ public class CustomDialog {
         final Button alertOkButton = (Button) dlg.findViewById(R.id.alert_ok_button);
         final Button alertCancelButton = (Button) dlg.findViewById(R.id.alert_cancel_button);
         alertTitle.setText(message);
-        // 커스텀 다이얼로그를 노출한다.
         dlg.show();
-        // 커스텀 다이얼로그의 각 위젯들을 정의한다.
+
         alertOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // '확인' 버튼 클릭시 메인 액티비티에서 설정한 main_label에
-                // 커스텀 다이얼로그에서 입력한 메시지를 대입한다.
-                // 커스텀 다이얼로그를 종료한다.
-                Log.i("jay.CustomDialog","message : "+message);
+                Log.i(PreferenceManager.TAG,"Dialogue_Message : "+message);
                 dlg.dismiss();
             }
         });
         alertCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                // 커스텀 다이얼로그를 종료한다.
+                // 커스텀 다이얼로그 종료
                 dlg.dismiss();
             }
         });

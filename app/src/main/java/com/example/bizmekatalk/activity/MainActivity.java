@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         JSONObject keyJson = new JSONObject();
         JSONObject bodyJson = new JSONObject();
         try {
-            Log.i("jay.MainActivity","compid "+PreferenceManager.getString(this,PreferenceManager.COMP_ID));
             keyJson.put("userid",PreferenceManager.getString(this,PreferenceManager.USER_ID));
             keyJson.put("compid",PreferenceManager.getString(this,PreferenceManager.COMP_ID));
             keyJson.put("ltoken",PreferenceManager.getString(this,PreferenceManager.L_TOKEN));
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int scrollState) {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastitemVisibleFlag) {
-                    Log.i("jay.MainActivity","스크롤의 끝 "+currentItemCount);
+                    Log.i(PreferenceManager.TAG,"스크롤의 끝 "+currentItemCount);
                     int i =0;
                     while(adapter.getCount()<allItems.size()&&i<PreferenceManager.PROFILE_LIST_STEP){
                         adapter.updateItems(allItems.get(currentItemCount));
@@ -114,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             //onPostExecute에서 item 업데이트
             try {
                 JSONArray jsonArr = new JSONArray(response.body().string());
-                Log.i("jay.ProfileListAdapter","arr_length : "+jsonArr.length());
                 for(int i=0;i<jsonArr.length();i++){
                     ProfileItem item = new ProfileItem();
                     String profileImage = jsonArr.getJSONObject(i).getString("profileimage");

@@ -5,9 +5,9 @@ import android.widget.EditText;
 
 import java.lang.reflect.Array;
 
-public class Validate {
+public class Validation {
 
-    public static <T extends EditText> boolean loginValidation(T... ts) {
+    public static <T extends EditText> boolean validateLogin(T... ts) {
         for (T t : ts) {
             String text = t.getText().toString().trim();
             if ("".equals(text)) {
@@ -17,7 +17,7 @@ public class Validate {
         return true;
     }//loginValidation
 
-    public static <T extends EditText> boolean pinValidation(T... ts) {
+    public static <T extends EditText> boolean validatePin(T... ts) {
         String text = ts[0].getText().toString();
         String text1 = ts[1].getText().toString();
         if (text.length()<4||!isNumber(text)||!(text1.equals(text))) {

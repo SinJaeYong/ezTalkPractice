@@ -1,10 +1,8 @@
 package com.example.bizmekatalk.utils;
 
-import android.os.AsyncTask;
+
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -47,9 +45,9 @@ public class HttpRequest {
         //addInterceptor(new LoggingInterceptor())
         RequestBody body = RequestBody.create(JSON,bodyJson.toString());
         Request request = new Request.Builder().url(url).headers(Headers.of(headerMap)).post(body).build();
-        Log.i("jay.HttpRequest","<requestHeader>\r\n"+request.headers().toString());
+        Log.i(PreferenceManager.TAG,"<requestHeader>\r\n"+request.headers().toString());
         Response response = client.newCall(request).execute();
-        Log.i("jay.HttpRequest","<responseHeader>\r\n"+response.headers().toString());
+        Log.i(PreferenceManager.TAG,"<responseHeader>\r\n"+response.headers().toString());
         return response;
     }
 
@@ -57,24 +55,18 @@ public class HttpRequest {
 
 
 
-
-    //==================================================================================
-
-
     public class LoggingInterceptor implements Interceptor {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
-
             long t1 = System.nanoTime();
-            Log.i("jay.LoggingInterceptor",String.format("Sending request %s on  %s , %n, %s",
+            Log.i(PreferenceManager.TAG,String.format("LoggingInterceptor Sending Request %s on  %s , %n, %s",
                     request.url(), chain.connection(), request.headers()));
-
             Response response = chain.proceed(request);
             long t2 = System.nanoTime();
-            Log.i("jay.LoggingInterceptor",String.format("Received response for %s in %.1fms%n%s",
+            Log.i(PreferenceManager.TAG,String.format(" LoggingInterceptor Received Response for %s in %.1fms%n%s",
                     response.request().url(), (t2 - t1) / 1e6d, response.headers()));
             return response;
         }
-    }
+    }//LoggingInterceptor
 }

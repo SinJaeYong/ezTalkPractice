@@ -21,20 +21,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bizmekatalk.R;
-import com.example.bizmekatalk.items.ProfileItem;
 import com.example.bizmekatalk.utils.CustomDialog;
 import com.example.bizmekatalk.utils.HttpRequest;
 import com.example.bizmekatalk.utils.PreferenceManager;
 import com.example.bizmekatalk.utils.SoftKeyboard;
-import com.example.bizmekatalk.utils.Validate;
+import com.example.bizmekatalk.utils.Validation;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,29 +64,28 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn = findViewById(R.id.loginBtn);
         loginImgLayout = findViewById(R.id.loginImgLayout);
         loginTextLayout = findViewById(R.id.loginTextLayout);
-        Log.i("jay","Login");
 
 
         if(loginBtn != null){
             loginBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    moveToPin();
+                    moveToPinRegister();
                 }
             });
         }else{
-            Log.i("jay","로그인 버튼 오류");
+            Log.i(PreferenceManager.TAG,"로그인 버튼 오류");
         }
 
         if(compIdEdit != null){
             compIdEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                    moveToPin();
+                    moveToPinRegister();
                     return true;
                 }
             });
-        }else Log.i("jay","회사아이디 위젯 오류");
+        }else Log.i(PreferenceManager.TAG,"회사아이디 위젯 오류");
 
 
         final LinearLayout loginLayout = findViewById(R.id.loginLayout);
@@ -134,36 +129,14 @@ public class LoginActivity extends AppCompatActivity {
             softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);//setSoftKeyboardCallback
         }
         else{
-            Log.i("jay","키보드 오류");
+            Log.i(PreferenceManager.TAG,"키보드 오류");
         }
 
     }//onCreate()
 
 
-    @Override
-    protected void onDestroy() {
-        Log.i("jay","Login onDestroy");
-        super.onDestroy();
-        softKeyboard.unRegisterSoftKeyboardCallback();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.i("jay","Login onStop");
-        super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.i("jay","Login onPause");
-        super.onPause();
-    }
-
-
-    private boolean moveToPin() {
-        Log.i("jay.LoginActivity","moveToPin");
-        if(Validate.loginValidation(userIdEdit,userPwdEdit,compIdEdit)){
-            Log.i("jay.LoginActivity","loginValidation");
+    private boolean moveToPinRegister() {
+        if(Validation.validateLogin(userIdEdit,userPwdEdit,compIdEdit)){
             final String userId = "fhZ6hZSfV5UG/CjJEyTsUA==";
             final String compId = "P1Ao25+VqxuNq9ijelCnnw==";
             final String pwd = "1dBcLJsXZJkGl/WdAxYtcw==";
@@ -174,16 +147,14 @@ public class LoginActivity extends AppCompatActivity {
             new Handler(Looper.myLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.i("jay.LoginActivity","Runnable run");
                     if(tokenFlag){
                         PreferenceManager.setString(LoginActivity.this,PreferenceManager.USER_ID,userId);
                         PreferenceManager.setString(LoginActivity.this,PreferenceManager.COMP_ID,compId);
-                        Log.i("jay.LoginActivity","compid "+PreferenceManager.getString(LoginActivity.this,PreferenceManager.COMP_ID));
-                        Intent intent = new Intent(LoginActivity.this, PinActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
                         startActivity(intent);
                         finish();
                     }else{
-                        Log.i("jay.LoginActivity","token 에러");
+                        Log.i(PreferenceManager.TAG,"token 에러");
                     }
                 }
             },2000);
@@ -197,8 +168,9 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }//moveToPin
 
+
+    //ltoken 요청 및 Preference에 저장
     private void setToken(String userId,String compId,String pwd){
-        Log.i("jay.LoginActivity","setToken");
         String url = "http://10.0.102.59:31033/api/Authentication/Login";
         JSONObject jsonObject = new JSONObject();
         Map<String,String> headerMap = new HashMap<String,String>();
@@ -220,11 +192,11 @@ public class LoginActivity extends AppCompatActivity {
     };
 
 
+    //비동기적으로 ltoken값을 전달받아 Preference에 저장
     private class TokenAsyncTask extends AsyncTask<HttpRequest,Void,Response>{
         @Override
         protected Response doInBackground(HttpRequest... httpRequests) {
             Response response=null;
-            Log.i("jay.LoginActivity","TokenAsyncTask");
             try {
                 response=httpRequests[0].post();
             } catch (IOException e) {
@@ -238,13 +210,13 @@ public class LoginActivity extends AppCompatActivity {
             String ltoken=null;
             try {
                 ltoken = new JSONObject(response.body().string()).get("ltoken").toString();
-                Log.i("jay.LoginActivity","responseToken "+ltoken);
                 PreferenceManager.setString(LoginActivity.this,PreferenceManager.L_TOKEN,ltoken);
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
+            //토큰값 저장을 알리는 Flag
             tokenFlag = ("".equals(ltoken)||ltoken==null) ? false:true;
-            Log.i("jay.LoginActivity","tokenFlag "+tokenFlag);
+            Log.i(PreferenceManager.TAG,"tokenFlag "+tokenFlag);
         }
     }
 

@@ -9,6 +9,8 @@ public class PreferenceManager {
 
     public static final int PROFILE_LIST_STEP = 20;
 
+    public static final String TAG = "jay";
+
     public static final String PIN_KEY = "pin";
 
     public static final String USER_ID = "userId";
