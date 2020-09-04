@@ -40,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
+        //ListView 및 Adapter 인스턴스
+        profile_list = findViewById(R.id.profile_list);
+        adapter = new ProfileListAdapter(this);
+
+        //GetAllUserInfo에 요청하기 위한 Url, RequestHeader 및 RequestBody 설정
         String url = "http://10.0.102.59:31033/api/OrgUserInfo/GetAllUserInfo";
         Map<String,String> headerMap = new HashMap<String,String>();
         JSONObject keyJson = new JSONObject();
@@ -58,9 +63,11 @@ public class MainActivity extends AppCompatActivity {
         headerMap.put("key",keyJson.toString());
         int method = PreferenceManager.HTTP_METHOD_POST;
 
-        profile_list = findViewById(R.id.profile_list);
-        profile_list.setOnScrollListener(new ListView.OnScrollListener(){
+        //GetAllUserInfo 요청처리
+        getAllItems(url,headerMap,bodyJson,method);
 
+        //ListView 스크롤 반응 처리
+        profile_list.setOnScrollListener(new ListView.OnScrollListener(){
             @Override
             public void onScrollStateChanged(AbsListView absListView, int scrollState) {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastitemVisibleFlag) {
@@ -83,8 +90,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        adapter = new ProfileListAdapter(this);
-        getAllItems(url,headerMap,bodyJson,method);
+
         //adapter.updateItems(allItems);
         //adapter.notifyDataSetChanged();
         profile_list.setAdapter(adapter);
@@ -126,22 +132,24 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
+            //ListView 첫 화면에 표시할 정보 Adapter에 전달
             int i=0;
             while(adapter.getCount()<allItems.size()&&i<PreferenceManager.PROFILE_LIST_STEP){
                 adapter.updateItems(allItems.get(i));
                 i++;
             }
+            //현재까지 전달한 아이템 카운트
             currentItemCount=i;
-            //모든 아이템 가져오기
 
             adapter.notifyDataSetChanged();
         }
     }
 
+    //GetAllUserInfo 요청
     public void getAllItems(String url, Map<String, String> headerMap, JSONObject bodyJson, int method){
         //request 설정
         HttpRequest httpRequest = new HttpRequest(url,headerMap,bodyJson,method);
-        //request 보내기
+        //request 비동기적으로 보내기
         new ProfileListAsyncTask().execute(httpRequest);
     }
 

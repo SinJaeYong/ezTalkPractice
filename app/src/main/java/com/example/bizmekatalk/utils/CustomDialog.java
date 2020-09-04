@@ -51,7 +51,7 @@ public class CustomDialog {
                 Log.i(PreferenceManager.TAG,"Dialogue_Message : "+message);
                 dlg.dismiss();
             }
-        });
+        });//람다식 사용하기
         alertCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

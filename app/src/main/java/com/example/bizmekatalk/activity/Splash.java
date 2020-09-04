@@ -25,15 +25,18 @@ public class Splash extends AppCompatActivity {
         setContentView(R.layout.splash);
         getSupportActionBar().hide();
         /*
+        //Splash 애니메이션 처리
         ImageView imageView = findViewById(R.id.loading);
         Animation ani = AnimationUtils.loadAnimation(this, R.anim.appear_logo);
         imageView.startAnimation(ani);
          */
+
         Handler handler = new Handler(Looper.myLooper()){
             @Override
             public void handleMessage(@NonNull Message msg) {
                 Intent intent;
-                if("".equals(PreferenceManager.getString(Splash.this,"pin"))){
+                //Preference에서 핀값 존재 유무 판별
+                if("".equals(PreferenceManager.getString(Splash.this,PreferenceManager.PIN_KEY))){
                     intent = new Intent(Splash.this, LoginActivity.class);
                 }else{
                     intent = new Intent(Splash.this,PinLoginActivity.class);

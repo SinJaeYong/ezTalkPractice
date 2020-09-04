@@ -67,6 +67,7 @@ public class PinRegisterActivity extends AppCompatActivity {
         }else{ Log.i(PreferenceManager.TAG,"핀 확인 위젯 오류");}
 
 
+        //키보드 반응형 레이아웃 설정
         final LinearLayout pinLayout = findViewById(R.id.pinLayout);
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         softKeyboard = new SoftKeyboard(pinLayout,im);
@@ -108,6 +109,7 @@ public class PinRegisterActivity extends AppCompatActivity {
 
     }
 
+    //입력값 검증,Pin값 저장 후 MainActivity로 이동
     private void moveToMain() {
         if(Validation.validatePin(pinNum,pinNumConf)){
             PreferenceManager.setString(PinRegisterActivity.this, PreferenceManager.PIN_KEY, pinNum.getText().toString());

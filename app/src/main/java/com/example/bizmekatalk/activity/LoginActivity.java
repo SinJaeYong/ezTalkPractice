@@ -66,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
         loginTextLayout = findViewById(R.id.loginTextLayout);
 
 
+        //로그인 버튼 클릭
         if(loginBtn != null){
             loginBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -77,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.i(PreferenceManager.TAG,"로그인 버튼 오류");
         }
 
+        //마지막 입력값에서 엔터 입력시 동작
         if(compIdEdit != null){
             compIdEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
@@ -88,10 +90,11 @@ public class LoginActivity extends AppCompatActivity {
         }else Log.i(PreferenceManager.TAG,"회사아이디 위젯 오류");
 
 
+
+        //키보드 반응형 레이아웃 설정
         final LinearLayout loginLayout = findViewById(R.id.loginLayout);
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         softKeyboard = new SoftKeyboard(loginLayout,im);
-
         if(loginImgLayout!=null&&loginTextLayout!=null){
             SoftKeyboard.SoftKeyboardChanged softKeyboardChanged = new SoftKeyboard.SoftKeyboardChanged() {
                 ViewGroup.LayoutParams param1;
@@ -135,14 +138,13 @@ public class LoginActivity extends AppCompatActivity {
     }//onCreate()
 
 
+    //PinRegister로 이동하기 위하여 입력값 validate, token 저장 후 이동(동기처리를 위하여 delay 2초 대기)
     private boolean moveToPinRegister() {
         if(Validation.validateLogin(userIdEdit,userPwdEdit,compIdEdit)){
             final String userId = "fhZ6hZSfV5UG/CjJEyTsUA==";
             final String compId = "P1Ao25+VqxuNq9ijelCnnw==";
             final String pwd = "1dBcLJsXZJkGl/WdAxYtcw==";
             setToken(userId,compId,pwd);
-
-
 
             new Handler(Looper.myLooper()).postDelayed(new Runnable() {
                 @Override
@@ -194,6 +196,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //비동기적으로 ltoken값을 전달받아 Preference에 저장
     private class TokenAsyncTask extends AsyncTask<HttpRequest,Void,Response>{
+        //AsyncTask deprecate 됨. retropit을 사용해보자
         @Override
         protected Response doInBackground(HttpRequest... httpRequests) {
             Response response=null;
