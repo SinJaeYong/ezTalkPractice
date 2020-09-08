@@ -6,49 +6,64 @@ import android.util.Log;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
 import okhttp3.Interceptor;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
+
 //리트로핏
-public class HttpRequest {
+public class HttpRequest<T> {
 
     private String url;
-    private Map<String,String> headerMap;
+    private Map<String,String> headerMap=new HashMap<String,String>();
     private JSONObject bodyJson;
     private int method;
 
-    private Response result;
-
-
-    public HttpRequest(String url, Map<String, String> headerMap, JSONObject bodyJson, int method) {
+    public HttpRequest(String url, JSONObject bodyJson, int method) {
         this.url = url;
-        this.headerMap = headerMap;
         this.bodyJson = bodyJson;
         this.method = method;
     }
 
+    public HttpRequest(String url, Map<String, String> headerMap, JSONObject bodyJson, int method) {
+        this(url,bodyJson,method);
+        this.headerMap = headerMap;
+    }
+
     //request post방식으로 보내기
-    public Response post() throws IOException {
-        MediaType JSON = MediaType.parse("application/json;charset=utf-8");
-        OkHttpClient client = new OkHttpClient.Builder().
-                connectTimeout(5, TimeUnit.MINUTES).
-                writeTimeout(5,TimeUnit.MINUTES).
-                readTimeout(5,TimeUnit.MINUTES).
-                build();
-        //addInterceptor(new LoggingInterceptor())
-        RequestBody body = RequestBody.create(JSON,bodyJson.toString());
-        Request request = new Request.Builder().url(url).headers(Headers.of(headerMap)).post(body).build();
-        Log.i(PreferenceManager.TAG,"<requestHeader>\r\n"+request.headers().toString());
-        Response response = client.newCall(request).execute();
-        Log.i(PreferenceManager.TAG,"<responseHeader>\r\n"+response.headers().toString());
-        return response;
+    public Call<T> getCall(){
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(chain -> {
+            Request original = chain.request();
+
+            Request request = original.newBuilder()
+                    .headers(Headers.of(headerMap))
+                    .build();
+
+            return chain.proceed(request);
+        });
+
+        OkHttpClient client = httpClient.build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(PreferenceManager.BASE_API_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory( GsonConverterFactory.create())
+                .client(client)
+                .build();
+        HttpServiceAPI httpService = retrofit.create(HttpServiceAPI.class);
+
+      //  Call<T> call = (Call<T>) httpService.callLoginAPI(bodyJson.toString());
+      //  Log.i("jay.LoginActivity","retrofit request() : "+call.request().toString());
+        return null;
     }
 
 

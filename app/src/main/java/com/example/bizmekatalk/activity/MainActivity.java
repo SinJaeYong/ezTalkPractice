@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import com.example.bizmekatalk.API.TestAPI;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.adapter.ProfileListAdapter;
 import com.example.bizmekatalk.items.ProfileItem;
@@ -26,6 +27,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ProfileListAdapter(this);
 
         //GetAllUserInfo에 요청하기 위한 Url, RequestHeader 및 RequestBody 설정
-        String url = "http://10.0.102.59:31033/api/OrgUserInfo/GetAllUserInfo";
+        String path = "OrgUserInfo/GetAllUserInfo";
         Map<String,String> headerMap = new HashMap<String,String>();
         JSONObject keyJson = new JSONObject();
         JSONObject bodyJson = new JSONObject();
@@ -61,10 +64,10 @@ public class MainActivity extends AppCompatActivity {
         headerMap.put("Content-Type","application/json;odata.metadata=full");
         headerMap.put("Expect","100-continue");
         headerMap.put("key",keyJson.toString());
-        int method = PreferenceManager.HTTP_METHOD_POST;
+
 
         //GetAllUserInfo 요청처리
-        getAllItems(url,headerMap,bodyJson,method);
+        getAllItems(path,headerMap,bodyJson,PreferenceManager.HTTP_METHOD_POST);
 
         //ListView 스크롤 반응 처리
         profile_list.setOnScrollListener(new ListView.OnScrollListener(){
@@ -106,11 +109,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Response doInBackground(HttpRequest... httpRequests) {
             Response response=null;
-            try {
-                response=httpRequests[0].post();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                response=httpRequests[0].post();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             return response;
         }
 
@@ -146,11 +149,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //GetAllUserInfo 요청
-    public void getAllItems(String url, Map<String, String> headerMap, JSONObject bodyJson, int method){
+    public void getAllItems(String path, Map<String, String> headerMap, JSONObject bodyJson, int method){
         //request 설정
-        HttpRequest httpRequest = new HttpRequest(url,headerMap,bodyJson,method);
+        Call<String> call = new TestAPI().getCall(path,headerMap,bodyJson,method);
         //request 비동기적으로 보내기
-        new ProfileListAsyncTask().execute(httpRequest);
+        call.enqueue(new Callback<String>() {
+
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                try {
+                    JSONArray jsonArr = new JSONArray(response.body());
+                    for(int i=0;i<jsonArr.length();i++){
+                        ProfileItem item = new ProfileItem();
+                        String profileImage = jsonArr.getJSONObject(i).getString("profileimage");
+                        String profileImgUrl = PreferenceManager.UPLOAD_URL + profileImage;
+                        item.setProfileImageUrl(profileImgUrl);
+                        item.setName(jsonArr.getJSONObject(i).getString("name"));
+                        item.setPosition(jsonArr.getJSONObject(i).getString("position"));
+                        item.setJob(jsonArr.getJSONObject(i).getString("job"));
+                        allItems.add(item);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                //ListView 첫 화면에 표시할 정보 Adapter에 전달
+                int i=0;
+                while(adapter.getCount()<allItems.size()&&i<PreferenceManager.PROFILE_LIST_STEP){
+                    adapter.updateItems(allItems.get(i));
+                    i++;
+                }
+                //현재까지 전달한 아이템 카운트
+                currentItemCount=i;
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
 }

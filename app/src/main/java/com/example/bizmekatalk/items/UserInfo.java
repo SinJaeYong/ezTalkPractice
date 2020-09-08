@@ -1,31 +1,53 @@
 package com.example.bizmekatalk.items;
 
+import com.google.gson.annotations.SerializedName;
+
 public class UserInfo {
-    private String userId;
-    private String compId;
-    private String ltoken;
+    @SerializedName("userid")
+    private String userid;
+    @SerializedName("compid")
+    private String compid;
+    @SerializedName("pwd")
+    private String pwd;
+    @SerializedName("type")
+    private String type;
 
-    public String getUserId() {
-        return userId;
+    public UserInfo(String userid, String compid, String pwd, String type) {
+        this.userid = userid;
+        this.compid = compid;
+        this.pwd = pwd;
+        this.type = type;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public String getUserid() {
+        return userid;
     }
 
-    public String getCompId() {
-        return compId;
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 
-    public void setCompId(String compId) {
-        this.compId = compId;
+    public String getCompid() {
+        return compid;
     }
 
-    public String getLtoken() {
-        return ltoken;
+    public void setCompid(String compid) {
+        this.compid = compid;
     }
 
-    public void setLtoken(String ltoken) {
-        this.ltoken = ltoken;
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

@@ -3,7 +3,6 @@ package com.example.bizmekatalk.activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,21 +19,18 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.bizmekatalk.API.TestAPI;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.utils.CustomDialog;
+
 import com.example.bizmekatalk.utils.HttpRequest;
 import com.example.bizmekatalk.utils.PreferenceManager;
 import com.example.bizmekatalk.utils.SoftKeyboard;
 import com.example.bizmekatalk.utils.Validation;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -47,15 +43,12 @@ public class LoginActivity extends AppCompatActivity {
     private Context mContext;
     private SoftKeyboard softKeyboard;
 
-    private boolean tokenFlag;
 
-    private final Handler handler = new Handler(Looper.myLooper());
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
-
 
         mContext = getApplicationContext();
         userIdEdit = findViewById(R.id.userIdEdit);
@@ -64,6 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn = findViewById(R.id.loginBtn);
         loginImgLayout = findViewById(R.id.loginImgLayout);
         loginTextLayout = findViewById(R.id.loginTextLayout);
+
+        //responseBodyConverter(Object.class,null,null).convert(ResponseBody.create(MediaType.parse("application/json;charset=utf-8"), "null"))
 
 
         //로그인 버튼 클릭
@@ -88,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }else Log.i(PreferenceManager.TAG,"회사아이디 위젯 오류");
-
 
 
         //키보드 반응형 레이아웃 설정
@@ -137,29 +131,64 @@ public class LoginActivity extends AppCompatActivity {
 
     }//onCreate()
 
+    private void createMyPost(String path, JSONObject jsonObj){
+
+        TestAPI testAPI = new TestAPI();
+        Call<String> call = testAPI.getCall(path,null,jsonObj,PreferenceManager.HTTP_METHOD_POST);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                Log.i("jay.LoginActivity","retrofit response : "+response);
+                String respBodyStr = response.body();
+                Log.i("jay.LoginActivity","retrofit response.body() : "+respBodyStr);
+                String ltoken=null;
+                try {
+                    ltoken = new JSONObject(respBodyStr).get("ltoken").toString();
+                    PreferenceManager.setString(LoginActivity.this,PreferenceManager.L_TOKEN,ltoken);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if(!("".equals(ltoken)||ltoken==null)){
+                    Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    Log.i(PreferenceManager.TAG,"토큰 저장 실패");
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.i("jay.LoginActivity","fail");
+            }
+        });
+    }
+
+
 
     //PinRegister로 이동하기 위하여 입력값 validate, token 저장 후 이동(동기처리를 위하여 delay 2초 대기)
-    private boolean moveToPinRegister() {
+    private boolean moveToPinRegister(){
         if(Validation.validateLogin(userIdEdit,userPwdEdit,compIdEdit)){
-            final String userId = "fhZ6hZSfV5UG/CjJEyTsUA==";
-            final String compId = "P1Ao25+VqxuNq9ijelCnnw==";
-            final String pwd = "1dBcLJsXZJkGl/WdAxYtcw==";
-            setToken(userId,compId,pwd);
 
-            new Handler(Looper.myLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(tokenFlag){
-                        PreferenceManager.setString(LoginActivity.this,PreferenceManager.USER_ID,userId);
-                        PreferenceManager.setString(LoginActivity.this,PreferenceManager.COMP_ID,compId);
-                        Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }else{
-                        Log.i(PreferenceManager.TAG,"token 에러");
-                    }
-                }
-            },2000);
+            String userid = "fhZ6hZSfV5UG/CjJEyTsUA==";
+            String compid = "P1Ao25+VqxuNq9ijelCnnw==";
+            String pwd = "1dBcLJsXZJkGl/WdAxYtcw==";
+            String type = "M";
+
+            //Json String으로 전달
+            String path = "Authentication/Login";
+            JSONObject jsonObj = new JSONObject();
+            try {
+                jsonObj.put("userid",userid);
+                jsonObj.put("compid",compid);
+                jsonObj.put("pwd",pwd);
+                jsonObj.put("type",type);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            PreferenceManager.setString(LoginActivity.this,PreferenceManager.USER_ID,userid);
+            PreferenceManager.setString(LoginActivity.this,PreferenceManager.COMP_ID,compid);
+            createMyPost(path,jsonObj);
 
         }
         else{
@@ -170,57 +199,5 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }//moveToPin
 
-
-    //ltoken 요청 및 Preference에 저장
-    private void setToken(String userId,String compId,String pwd){
-        String url = "http://10.0.102.59:31033/api/Authentication/Login";
-        JSONObject jsonObject = new JSONObject();
-        Map<String,String> headerMap = new HashMap<String,String>();
-        int method = PreferenceManager.HTTP_METHOD_POST;
-        try {
-            jsonObject.put("userid",userId);
-            jsonObject.put("compid",compId);
-            jsonObject.put("pwd",pwd);
-            jsonObject.put("type","M");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }finally {
-            HttpRequest httpRequest = new HttpRequest(url,headerMap,jsonObject,method);
-            new TokenAsyncTask().execute(httpRequest);
-        }
-
-
-
-    };
-
-
-    //비동기적으로 ltoken값을 전달받아 Preference에 저장
-    private class TokenAsyncTask extends AsyncTask<HttpRequest,Void,Response>{
-        //AsyncTask deprecate 됨. retropit을 사용해보자
-        @Override
-        protected Response doInBackground(HttpRequest... httpRequests) {
-            Response response=null;
-            try {
-                response=httpRequests[0].post();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(Response response) {
-            String ltoken=null;
-            try {
-                ltoken = new JSONObject(response.body().string()).get("ltoken").toString();
-                PreferenceManager.setString(LoginActivity.this,PreferenceManager.L_TOKEN,ltoken);
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-            //토큰값 저장을 알리는 Flag
-            tokenFlag = ("".equals(ltoken)||ltoken==null) ? false:true;
-            Log.i(PreferenceManager.TAG,"tokenFlag "+tokenFlag);
-        }
-    }
 
 }
