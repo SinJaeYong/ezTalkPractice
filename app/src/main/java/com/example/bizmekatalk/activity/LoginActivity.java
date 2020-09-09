@@ -19,11 +19,10 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bizmekatalk.API.TestAPI;
+import com.example.bizmekatalk.API.RequestAPI;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.utils.CustomDialog;
 
-import com.example.bizmekatalk.utils.HttpRequest;
 import com.example.bizmekatalk.utils.PreferenceManager;
 import com.example.bizmekatalk.utils.SoftKeyboard;
 import com.example.bizmekatalk.utils.Validation;
@@ -58,29 +57,19 @@ public class LoginActivity extends AppCompatActivity {
         loginImgLayout = findViewById(R.id.loginImgLayout);
         loginTextLayout = findViewById(R.id.loginTextLayout);
 
-        //responseBodyConverter(Object.class,null,null).convert(ResponseBody.create(MediaType.parse("application/json;charset=utf-8"), "null"))
-
 
         //로그인 버튼 클릭
         if(loginBtn != null){
-            loginBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    moveToPinRegister();
-                }
-            });
+            loginBtn.setOnClickListener(view -> moveToPinRegister());
         }else{
             Log.i(PreferenceManager.TAG,"로그인 버튼 오류");
         }
 
         //마지막 입력값에서 엔터 입력시 동작
         if(compIdEdit != null){
-            compIdEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                    moveToPinRegister();
-                    return true;
-                }
+            compIdEdit.setOnEditorActionListener((textView, i, keyEvent) -> {
+                moveToPinRegister();
+                return true;
             });
         }else Log.i(PreferenceManager.TAG,"회사아이디 위젯 오류");
 
@@ -95,31 +84,21 @@ public class LoginActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams param2;
                 @Override
                 public void onSoftKeyboardShow() {
-                    new Handler(Looper.getMainLooper()).post(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                            params.setMargins(0,0,0,0);
-                            param1 = loginImgLayout.getLayoutParams();
-                            param2 = loginTextLayout.getLayoutParams();
-                            loginImgLayout.setLayoutParams(params);
-                            loginTextLayout.setLayoutParams(params);
-                        }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(0,0,0,0);
+                        param1 = loginImgLayout.getLayoutParams();
+                        param2 = loginTextLayout.getLayoutParams();
+                        loginImgLayout.setLayoutParams(params);
+                        loginTextLayout.setLayoutParams(params);
                     });
                 }
 
                 @Override
                 public void onSoftKeyboardHide() {
-                    new Handler(Looper.getMainLooper()).post(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            loginImgLayout.setLayoutParams(param1);
-                            loginTextLayout.setLayoutParams(param2);
-                        }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        loginImgLayout.setLayoutParams(param1);
+                        loginTextLayout.setLayoutParams(param2);
                     });
                 }
             };
@@ -132,15 +111,12 @@ public class LoginActivity extends AppCompatActivity {
     }//onCreate()
 
     private void createMyPost(String path, JSONObject jsonObj){
-
-        TestAPI testAPI = new TestAPI();
-        Call<String> call = testAPI.getCall(path,null,jsonObj,PreferenceManager.HTTP_METHOD_POST);
+        RequestAPI requestAPI = new RequestAPI();
+        Call<String> call = requestAPI.getCall(path,null,jsonObj,PreferenceManager.HTTP_METHOD_POST);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-                Log.i("jay.LoginActivity","retrofit response : "+response);
                 String respBodyStr = response.body();
-                Log.i("jay.LoginActivity","retrofit response.body() : "+respBodyStr);
                 String ltoken=null;
                 try {
                     ltoken = new JSONObject(respBodyStr).get("ltoken").toString();
@@ -159,7 +135,8 @@ public class LoginActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.i("jay.LoginActivity","fail");
+                Log.i(PreferenceManager.TAG,"Response Fail");
+                t.printStackTrace();
             }
         });
     }

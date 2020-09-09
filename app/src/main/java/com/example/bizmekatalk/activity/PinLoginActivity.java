@@ -62,12 +62,9 @@ public class PinLoginActivity extends AppCompatActivity {
                 TextView pin = pinGrid.findViewWithTag("pin"+String.valueOf(i));
                 final int pinNumber = i;
                 //숫자 버튼 클릭시
-                pin.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //핀 Dot 이미지 변경 및 LinkedList에 핀값 저장
-                        setPins(pinNumber,PreferenceManager.PIN_MAX_COUNT);
-                    }
+                pin.setOnClickListener(view -> {
+                    //핀 Dot 이미지 변경 및 LinkedList에 핀값 저장
+                    setPins(pinNumber,PreferenceManager.PIN_MAX_COUNT);
                 });
                 pinBtns.add(pin);
             }
@@ -78,14 +75,11 @@ public class PinLoginActivity extends AppCompatActivity {
         //지우기 버튼
         pinRemove = findViewById(R.id.pinRemove);
         if(pinRemove != null){
-            pinRemove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(pinPassList.size()>0){
-                        //핀 Dot 이미지 변경 및 LinkedList에 핀값 삭제
-                        pinPassList.removeLast();
-                        pinDots.get(pinPassList.size()).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
-                    }
+            pinRemove.setOnClickListener(view -> {
+                if(pinPassList.size()>0){
+                    //핀 Dot 이미지 변경 및 LinkedList에 핀값 삭제
+                    pinDots.get(pinPassList.size()).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
+                    pinPassList.removeLast();
                 }
             });
         }else{
@@ -96,30 +90,17 @@ public class PinLoginActivity extends AppCompatActivity {
         //로그인 버튼
         pinLogin = findViewById(R.id.pinLogin);
         if(pinLogin != null){
-            pinLogin.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //LoginActivity 화면으로 이동
-                    PreferenceManager.clear(PinLoginActivity.this);
-                    Intent intent = new Intent(PinLoginActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
+            pinLogin.setOnClickListener(view -> {
+                //LoginActivity 화면으로 이동
+                PreferenceManager.clear(PinLoginActivity.this);
+                Intent intent = new Intent(PinLoginActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
             });
         }else {
             Log.i(PreferenceManager.TAG,"핀로그인에서 로그인 이동 오류");
         }
 
-        /*
-        BaseInterpolator baseInterpolator = new BaseInterpolator() {
-            @Override
-            public float getInterpolation(float v) {
-                return 0;
-            }
-        };
-        CycleInterpolator cycleInterpolator = new CycleInterpolator(12);
-        cycleInterpolator.getInterpolation(100);
-         */
     }//onCreate
 
 
@@ -129,11 +110,7 @@ public class PinLoginActivity extends AppCompatActivity {
         pinDots.get(pinPassList.size()-1).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_blue,null));
         Handler mHandler = new Handler(Looper.myLooper());
         if(pinPassList.size()==maxCount) {
-            mHandler.postDelayed(new Runnable()  {
-                public void run() {
-                    validatePins();
-                }
-            }, 200); // 0.5초후
+            mHandler.postDelayed(() -> validatePins(), 200); // 0.5초후
         }
     }///setPins(int pinNumber,int maxCount)
 

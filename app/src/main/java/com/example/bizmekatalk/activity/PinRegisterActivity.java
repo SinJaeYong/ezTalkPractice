@@ -45,24 +45,16 @@ public class PinRegisterActivity extends AppCompatActivity {
         pinTextLayout = findViewById(R.id.pin_text_layout);
 
         if ( this.pinUpdateBtn!= null){
-            this.pinUpdateBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    moveToMain();
-                }
-            });
+            this.pinUpdateBtn.setOnClickListener(view -> moveToMain());
         }
         else{
             Log.i(PreferenceManager.TAG,"핀 업데이트 오류");
         }
 
         if(this.pinNumConf != null){
-            pinNumConf.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                    moveToMain();
-                    return true;
-                }
+            pinNumConf.setOnEditorActionListener((textView, i, keyEvent) -> {
+                moveToMain();
+                return true;
             });
         }else{ Log.i(PreferenceManager.TAG,"핀 확인 위젯 오류");}
 
@@ -76,36 +68,25 @@ public class PinRegisterActivity extends AppCompatActivity {
             ViewGroup.LayoutParams param2;
             @Override
             public void onSoftKeyboardShow() {
-                new Handler(Looper.getMainLooper()).post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(0,0,0,0);
-                        param1 = pinImgLayout.getLayoutParams();
-                        param2 = pinTextLayout.getLayoutParams();
-                        pinImgLayout.setLayoutParams(params);
-                        pinTextLayout.setLayoutParams(params);
-                    }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.setMargins(0,0,0,0);
+                    param1 = pinImgLayout.getLayoutParams();
+                    param2 = pinTextLayout.getLayoutParams();
+                    pinImgLayout.setLayoutParams(params);
+                    pinTextLayout.setLayoutParams(params);
                 });
             }
 
             @Override
             public void onSoftKeyboardHide() {
-                new Handler(Looper.getMainLooper()).post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        pinImgLayout.setLayoutParams(param1);
-                        pinTextLayout.setLayoutParams(param2);
-                    }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    pinImgLayout.setLayoutParams(param1);
+                    pinTextLayout.setLayoutParams(param2);
                 });
             }
         };
         softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);//setSoftKeyboardCallback
-
 
     }
 

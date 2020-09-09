@@ -2,10 +2,8 @@ package com.example.bizmekatalk.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,36 +21,20 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.items.ProfileItem;
-import com.example.bizmekatalk.utils.HttpRequest;
-import com.example.bizmekatalk.utils.PreferenceManager;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
-
-import okhttp3.Response;
 
 public class ProfileListAdapter extends BaseAdapter {
 
     private Context context;
 
-    private int layoutResId;
 
     private List<ProfileItem> items = new Vector<ProfileItem>();
 
 
     public ProfileListAdapter(Context context) {
         this.context = context;
-    }
-    public ProfileListAdapter(Context context, List<ProfileItem> items) {
-        this.context = context;
-        this.items = items;
     }
 
     public void updateItems(ProfileItem item){
@@ -81,7 +63,6 @@ public class ProfileListAdapter extends BaseAdapter {
 
             LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             itemView=inflater.inflate(R.layout.profile_item,null);
-            //itemView=inflater.inflate(layoutResId,null);
         }
         final ImageView itemProfileImage = itemView.findViewById(R.id.itemProfileImage);
         TextView itemName = itemView.findViewById(R.id.itemName);
@@ -95,12 +76,7 @@ public class ProfileListAdapter extends BaseAdapter {
                 listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Glide.with(context).load(R.drawable.user_profile_icon).transform(new CenterCrop()).into(itemProfileImage);
-                            }
-                        });
+                        handler.post(() -> Glide.with(context).load(R.drawable.user_profile_icon).transform(new CenterCrop()).into(itemProfileImage));
                         return false;
                     }
                     @Override

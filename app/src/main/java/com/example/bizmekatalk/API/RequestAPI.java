@@ -21,14 +21,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class OrgUserInforAPI extends APIService {
+public class RequestAPI {
 
-    public OrgUserInforAPI(String path1) {
-        super(path1);
-    }
 
-    @Override
-    public <T> Call<T> getCall(String path2, @Nullable Map<String, String> headerMap,@Nullable JSONObject bodyJson, int method) {
+    public <T> Call<T> getCall(String path, @Nullable Map<String, String> headerMap, @Nullable JSONObject bodyJson, int method) {
 
         Map<String,String> optHeaderMap = Optional.ofNullable(headerMap).orElse(new HashMap<String, String>());
         JSONObject optBodyJson = Optional.ofNullable(bodyJson).orElse(new JSONObject());
@@ -54,7 +50,7 @@ public class OrgUserInforAPI extends APIService {
                 .build();
         HttpServiceAPI httpService = retrofit.create(HttpServiceAPI.class);
 
-        Call<T> call = (Call<T>) httpService.callGetAllUserInfoAPI(optBodyJson.toString());
+        Call<T> call = (Call<T>) httpService.callAPI(path,optBodyJson.toString());
         Log.i("jay.LoginActivity","retrofit request() : "+call.request().toString());
         return call;
     }

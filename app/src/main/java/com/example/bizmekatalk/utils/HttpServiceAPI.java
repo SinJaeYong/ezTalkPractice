@@ -56,11 +56,6 @@ public interface HttpServiceAPI {
     })
     Call<String> callAPI(@Body JSONObject jsonObj);
 
-    /*
-    @POST("api/Authentication/Login")
-    Call<String> createPost(@Body UserInfo userInfo);
-
-     */
 
     @POST("Authentication/Login")
     @Headers({
@@ -75,19 +70,12 @@ public interface HttpServiceAPI {
             "Content-Type: application/json;charset=utf-8"
     })
     Call<ResponseBody> callAPI(@Body RequestBody requestBody);
-    /*
-    @POST("api/Authentication/Login")
-    Call<String> createPost(@Body RequestBody requestBody);
-     */
+
+
     @POST("{path}")
     Call<String> callAPI(@Path("path") String path, @Body String jsonStr);
 
-    @POST("OrgUserInfo/GetAllUserInfo")
-    Call<String> callGetAllUserInfoAPI(@Body String jsonStr);
 
-    @FormUrlEncoded
-    @POST("/posts")
-    Call<Post> postData(@FieldMap HashMap<String,Object> param);
 
 
 
