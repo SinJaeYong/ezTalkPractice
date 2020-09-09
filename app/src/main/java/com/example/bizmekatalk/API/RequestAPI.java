@@ -26,8 +26,10 @@ public class RequestAPI {
 
     public <T> Call<T> getCall(String path, @Nullable Map<String, String> headerMap, @Nullable JSONObject bodyJson, int method) {
 
-        Map<String,String> optHeaderMap = Optional.ofNullable(headerMap).orElse(new HashMap<String, String>());
-        JSONObject optBodyJson = Optional.ofNullable(bodyJson).orElse(new JSONObject());
+        Map<String,String> optHeaderMap = Optional.ofNullable(headerMap).orElseGet(HashMap<String,String>::new);
+        JSONObject optBodyJson = Optional.ofNullable(bodyJson).orElseGet(JSONObject::new);
+        //target version
+        //Optional
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(chain -> {

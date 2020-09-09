@@ -2,35 +2,14 @@ package com.example.bizmekatalk.items;
 
 import com.google.gson.annotations.SerializedName;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class UserResponse {
     @SerializedName("authvalue")
-    private String authvalue;
+    @Getter @Setter private String authvalue;
     @SerializedName("failcnt")
-    private String failcnt;
+    @Getter @Setter private String failcnt;
     @SerializedName("ltoken")
-    private String ltoken;
-
-    public String getAuthvalue() {
-        return authvalue;
-    }
-
-    public void setAuthvalue(String authvalue) {
-        this.authvalue = authvalue;
-    }
-
-    public String getFailcnt() {
-        return failcnt;
-    }
-
-    public void setFailcnt(String failcnt) {
-        this.failcnt = failcnt;
-    }
-
-    public String getLtoken() {
-        return ltoken;
-    }
-
-    public void setLtoken(String ltoken) {
-        this.ltoken = ltoken;
-    }
+    @Getter @Setter private String ltoken;
 }

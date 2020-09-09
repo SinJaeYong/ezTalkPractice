@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bizmekatalk.R;
+import com.example.bizmekatalk.databinding.SplashBinding;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
 public class Splash extends AppCompatActivity {

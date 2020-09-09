@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastitemVisibleFlag) {
                     Log.i(PreferenceManager.TAG,"스크롤의 끝 "+currentItemCount);
                     int i =0;
-                    while(adapter.getCount()<allItems.size()&&i<PreferenceManager.PROFILE_LIST_STEP){
+                    while((adapter.getCount() < allItems.size()) && (i < PreferenceManager.PROFILE_LIST_STEP)){
                         adapter.updateItems(allItems.get(currentItemCount));
                         currentItemCount++;
                         i++;
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 //Flag 변경
-                lastitemVisibleFlag = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
+                lastitemVisibleFlag = (totalItemCount > 0) && ((firstVisibleItem + visibleItemCount) >= totalItemCount);
             }
         });
         profile_list.setAdapter(adapter);
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //ListView 첫 화면에 표시할 정보 Adapter에 전달
                 int i=0;
-                while(adapter.getCount()<allItems.size()&&i<PreferenceManager.PROFILE_LIST_STEP){
+                while((adapter.getCount() < allItems.size()) &&(i < PreferenceManager.PROFILE_LIST_STEP)){
                     adapter.updateItems(allItems.get(i));
                     i++;
                 }

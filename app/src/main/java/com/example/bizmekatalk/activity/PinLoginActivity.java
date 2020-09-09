@@ -5,10 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.BaseInterpolator;
-import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -38,7 +35,7 @@ public class PinLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pin_login);
+        setContentView(R.layout.pin_login_activity);
         getSupportActionBar().hide();
         pinGrid = findViewById(R.id.pinGrid);
         pinLinear = findViewById(R.id.pinLinear);
@@ -109,7 +106,7 @@ public class PinLoginActivity extends AppCompatActivity {
         pinPassList.addLast(pinNumber);
         pinDots.get(pinPassList.size()-1).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_blue,null));
         Handler mHandler = new Handler(Looper.myLooper());
-        if(pinPassList.size()==maxCount) {
+        if(pinPassList.size() == maxCount) {
             mHandler.postDelayed(() -> validatePins(), 200); // 0.5초후
         }
     }///setPins(int pinNumber,int maxCount)

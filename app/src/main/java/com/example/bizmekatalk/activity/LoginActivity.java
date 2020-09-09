@@ -7,20 +7,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bizmekatalk.API.RequestAPI;
 import com.example.bizmekatalk.R;
+import com.example.bizmekatalk.databinding.LoginActivityBinding;
 import com.example.bizmekatalk.utils.CustomDialog;
 
 import com.example.bizmekatalk.utils.PreferenceManager;
@@ -39,24 +38,23 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginBtn;
     private LinearLayout loginImgLayout;
     private LinearLayout loginTextLayout;
-    private Context mContext;
     private SoftKeyboard softKeyboard;
 
-
+    private LoginActivityBinding binding;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = LoginActivityBinding.inflate(getLayoutInflater());
+        View lView = binding.getRoot();
+        setContentView(lView);
         getSupportActionBar().hide();
 
-        mContext = getApplicationContext();
         userIdEdit = findViewById(R.id.userIdEdit);
         userPwdEdit = findViewById(R.id.userPwdEdit);
         compIdEdit = findViewById(R.id.compIdEdit);
         loginBtn = findViewById(R.id.loginBtn);
         loginImgLayout = findViewById(R.id.loginImgLayout);
         loginTextLayout = findViewById(R.id.loginTextLayout);
-
 
         //로그인 버튼 클릭
         if(loginBtn != null){
@@ -78,7 +76,8 @@ public class LoginActivity extends AppCompatActivity {
         final LinearLayout loginLayout = findViewById(R.id.loginLayout);
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         softKeyboard = new SoftKeyboard(loginLayout,im);
-        if(loginImgLayout!=null&&loginTextLayout!=null){
+        if((loginImgLayout != null) && (loginTextLayout != null)){
+            //code convention
             SoftKeyboard.SoftKeyboardChanged softKeyboardChanged = new SoftKeyboard.SoftKeyboardChanged() {
                 ViewGroup.LayoutParams param1;
                 ViewGroup.LayoutParams param2;
@@ -125,7 +124,8 @@ public class LoginActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                if(!("".equals(ltoken)||ltoken==null)){
+                //null 처리
+                if(!(("".equals(ltoken)) || (ltoken == null))){
                     Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
                     startActivity(intent);
                     finish();

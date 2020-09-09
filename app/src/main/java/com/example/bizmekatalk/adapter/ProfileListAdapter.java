@@ -59,7 +59,7 @@ public class ProfileListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View itemView, ViewGroup viewGroup) {
-        if(itemView==null){
+        if(itemView == null){
 
             LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             itemView=inflater.inflate(R.layout.profile_item,null);
