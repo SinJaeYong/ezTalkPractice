@@ -16,10 +16,12 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.SupportActionModeWrapper;
 
 import com.example.bizmekatalk.API.RequestAPI;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.databinding.LoginActivityBinding;
+import com.example.bizmekatalk.items.RequestParams;
 import com.example.bizmekatalk.utils.CustomDialog;
 
 import com.example.bizmekatalk.utils.PreferenceManager;
@@ -31,16 +33,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class LoginActivity extends AppCompatActivity {
-
-    private EditText userIdEdit;
-    private EditText userPwdEdit;
-    private EditText compIdEdit;
-    private Button loginBtn;
-    private LinearLayout loginImgLayout;
-    private LinearLayout loginTextLayout;
     private SoftKeyboard softKeyboard;
-
     private LoginActivityBinding binding;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,95 +44,81 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(lView);
         getSupportActionBar().hide();
 
-        userIdEdit = findViewById(R.id.userIdEdit);
-        userPwdEdit = findViewById(R.id.userPwdEdit);
-        compIdEdit = findViewById(R.id.compIdEdit);
-        loginBtn = findViewById(R.id.loginBtn);
-        loginImgLayout = findViewById(R.id.loginImgLayout);
-        loginTextLayout = findViewById(R.id.loginTextLayout);
+
 
         //로그인 버튼 클릭
-        if(loginBtn != null){
-            loginBtn.setOnClickListener(view -> moveToPinRegister());
-        }else{
-            Log.i(PreferenceManager.TAG,"로그인 버튼 오류");
-        }
+        binding.loginBtn.setOnClickListener(view -> moveToPinRegister());
+
 
         //마지막 입력값에서 엔터 입력시 동작
-        if(compIdEdit != null){
-            compIdEdit.setOnEditorActionListener((textView, i, keyEvent) -> {
-                moveToPinRegister();
-                return true;
-            });
-        }else Log.i(PreferenceManager.TAG,"회사아이디 위젯 오류");
+        binding.compIdEdit.setOnEditorActionListener((textView, i, keyEvent) ->moveToPinRegister());
+
 
 
         //키보드 반응형 레이아웃 설정
-        final LinearLayout loginLayout = findViewById(R.id.loginLayout);
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
-        softKeyboard = new SoftKeyboard(loginLayout,im);
-        if((loginImgLayout != null) && (loginTextLayout != null)){
-            //code convention
-            SoftKeyboard.SoftKeyboardChanged softKeyboardChanged = new SoftKeyboard.SoftKeyboardChanged() {
-                ViewGroup.LayoutParams param1;
-                ViewGroup.LayoutParams param2;
-                @Override
-                public void onSoftKeyboardShow() {
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(0,0,0,0);
-                        param1 = loginImgLayout.getLayoutParams();
-                        param2 = loginTextLayout.getLayoutParams();
-                        loginImgLayout.setLayoutParams(params);
-                        loginTextLayout.setLayoutParams(params);
-                    });
-                }
+        softKeyboard = new SoftKeyboard(binding.loginLayout,im);
+        //code convention
+        SoftKeyboard.SoftKeyboardChanged softKeyboardChanged = new SoftKeyboard.SoftKeyboardChanged() {
+            ViewGroup.LayoutParams param1;
+            ViewGroup.LayoutParams param2;
+            @Override
+            public void onSoftKeyboardShow() {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.setMargins(0,0,0,0);
+                    param1 = binding.loginImgLayout.getLayoutParams();
+                    param2 = binding.loginTextLayout.getLayoutParams();
+                    binding.loginImgLayout.setLayoutParams(params);
+                    binding.loginTextLayout.setLayoutParams(params);
+                });
+            }
 
-                @Override
-                public void onSoftKeyboardHide() {
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        loginImgLayout.setLayoutParams(param1);
-                        loginTextLayout.setLayoutParams(param2);
-                    });
-                }
-            };
-            softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);//setSoftKeyboardCallback
-        }
-        else{
-            Log.i(PreferenceManager.TAG,"키보드 오류");
-        }
+            @Override
+            public void onSoftKeyboardHide() {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    binding.loginImgLayout.setLayoutParams(param1);
+                    binding.loginTextLayout.setLayoutParams(param2);
+                });
+            }
+        };
+        softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);//setSoftKeyboardCallback
+
 
     }//onCreate()
 
-    private void createMyPost(String path, JSONObject jsonObj){
+    private void createMyPost(RequestParams params){
         RequestAPI requestAPI = new RequestAPI();
-        Call<String> call = requestAPI.getCall(path,null,jsonObj,PreferenceManager.HTTP_METHOD_POST);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-                String respBodyStr = response.body();
-                String ltoken=null;
-                try {
-                    ltoken = new JSONObject(respBodyStr).get("ltoken").toString();
-                    PreferenceManager.setString(LoginActivity.this,PreferenceManager.L_TOKEN,ltoken);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        requestAPI.<String>getCall(params).ifPresent(call->{
+            call.enqueue(
+                    new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                            String respBodyStr = response.body();
+                            String ltoken=null;
+                            try {
+                                ltoken = new JSONObject(respBodyStr).get("ltoken").toString();
+                                PreferenceManager.setString(LoginActivity.this,PreferenceManager.L_TOKEN,ltoken);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
-                //null 처리
-                if(!(("".equals(ltoken)) || (ltoken == null))){
-                    Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
-                    startActivity(intent);
-                    finish();
-                }else{
-                    Log.i(PreferenceManager.TAG,"토큰 저장 실패");
-                }
-            }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.i(PreferenceManager.TAG,"Response Fail");
-                t.printStackTrace();
-            }
+                            //null 처리
+                            if(!(("".equals(ltoken)) || (ltoken == null))){
+                                Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }else{
+                                Log.i(PreferenceManager.TAG,"토큰 저장 실패");
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Log.i(PreferenceManager.TAG,"Response Fail");
+                            t.printStackTrace();
+                        }
+                    }
+            );
         });
     }
 
@@ -145,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //PinRegister로 이동하기 위하여 입력값 validate, token 저장 후 이동(동기처리를 위하여 delay 2초 대기)
     private boolean moveToPinRegister(){
-        if(Validation.validateLogin(userIdEdit,userPwdEdit,compIdEdit)){
+        if(Validation.validateLogin(binding.userIdEdit, binding.userPwdEdit, binding.compIdEdit)){
 
             String userid = "fhZ6hZSfV5UG/CjJEyTsUA==";
             String compid = "P1Ao25+VqxuNq9ijelCnnw==";
@@ -154,18 +135,18 @@ public class LoginActivity extends AppCompatActivity {
 
             //Json String으로 전달
             String path = "Authentication/Login";
-            JSONObject jsonObj = new JSONObject();
+            JSONObject bodyJson = new JSONObject();
             try {
-                jsonObj.put("userid",userid);
-                jsonObj.put("compid",compid);
-                jsonObj.put("pwd",pwd);
-                jsonObj.put("type",type);
+                bodyJson.put("userid",userid);
+                bodyJson.put("compid",compid);
+                bodyJson.put("pwd",pwd);
+                bodyJson.put("type",type);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             PreferenceManager.setString(LoginActivity.this,PreferenceManager.USER_ID,userid);
             PreferenceManager.setString(LoginActivity.this,PreferenceManager.COMP_ID,compid);
-            createMyPost(path,jsonObj);
+            createMyPost(new RequestParams(path,null,bodyJson,PreferenceManager.HTTP_METHOD_POST));
 
         }
         else{

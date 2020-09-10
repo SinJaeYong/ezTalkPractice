@@ -11,7 +11,8 @@
         android:scaleType="fitXY"
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="60dp" />
+        android:layout_height="60dp"
+        />
     <LinearLayout
         android:layout_weight="4"
         android:layout_width="0dp"
@@ -25,26 +26,26 @@
             android:layout_height="0dp"
             android:orientation="horizontal"
             >
+
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="match_parent"
                 android:id="@+id/itemName"
-                android:textColor="#228B22"
-                android:textSize="20sp"
-                 />
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:textSize="20sp" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:id="@+id/itemPosition"
-                android:textColor="#228B22"
+                android:textColor="#000000"
                 android:textSize="20sp"
                 />
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:id="@+id/itemCondition"
@@ -62,8 +63,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/itemJob"
-                android:textColor="#A52A2A"
-                android:textSize="20sp"
+                android:textColor="#A4A4A4"
+                android:textSize="18sp"
                  />
 
         </LinearLayout>

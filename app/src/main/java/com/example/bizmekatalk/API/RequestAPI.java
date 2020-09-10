@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.bizmekatalk.items.RequestParams;
 import com.example.bizmekatalk.utils.HttpServiceAPI;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
@@ -24,10 +25,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class RequestAPI {
 
 
-    public <T> Call<T> getCall(String path, @Nullable Map<String, String> headerMap, @Nullable JSONObject bodyJson, int method) {
+    public <T> Optional<Call<T>> getCall(RequestParams params) {
 
-        Map<String,String> optHeaderMap = Optional.ofNullable(headerMap).orElseGet(HashMap<String,String>::new);
-        JSONObject optBodyJson = Optional.ofNullable(bodyJson).orElseGet(JSONObject::new);
+        Map<String,String> optHeaderMap = Optional.ofNullable(params.getHeaderMap()).orElseGet(HashMap<String,String>::new);
+        JSONObject optBodyJson = Optional.ofNullable(params.getBodyJson()).orElseGet(JSONObject::new);
         //target version
         //Optional
 
@@ -52,8 +53,9 @@ public class RequestAPI {
                 .build();
         HttpServiceAPI httpService = retrofit.create(HttpServiceAPI.class);
 
-        Call<T> call = (Call<T>) httpService.callAPI(path,optBodyJson.toString());
+        Call<T> call = (Call<T>) httpService.callAPI(params.getPath(),optBodyJson.toString());
         Log.i("jay.LoginActivity","retrofit request() : "+call.request().toString());
-        return call;
+        Optional<Call<T>> optCall = Optional.ofNullable(call);
+        return optCall;
     }
 }
