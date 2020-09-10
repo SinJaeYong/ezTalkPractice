@@ -32,10 +32,6 @@ public class ProfileListAdapter extends BaseAdapter {
 
     private Context context;
 
-    private ImageView itemProfileImage;
-    private TextView itemName;
-    private TextView itemPosition;
-    private TextView itemJob;
     private List<ProfileItem> items = new Vector<ProfileItem>();
 
 
@@ -74,35 +70,35 @@ public class ProfileListAdapter extends BaseAdapter {
         if(view == null){
             LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view=inflater.inflate(R.layout.profile_item,viewGroup,false);
-            
             holder = new ViewHolder();
-            holder.itemProfileImage = view.findViewById(R.id.itemProfileImage);
-            holder.itemName = view.findViewById(R.id.itemName);
-            holder.itemPosition = view.findViewById(R.id.itemPosition);
-            holder.itemJob = view.findViewById(R.id.itemJob);
-            itemProfileImage = itemView.findViewById(R.id.itemProfileImage);
-            itemName = itemView.findViewById(R.id.itemName);
-            itemPosition = itemView.findViewById(R.id.itemPosition);
-            itemJob = itemView.findViewById(R.id.itemJob);
+            holder.itemProfileImage = (ImageView)view.findViewById(R.id.itemProfileImage);
+            holder.itemName = (TextView)view.findViewById(R.id.itemName);
+            holder.itemPosition = (TextView)view.findViewById(R.id.itemPosition);
+            holder.itemJob = (TextView)view.findViewById(R.id.itemJob);
+            view.setTag(holder);
+        }
+        else {
+            holder = (ViewHolder)view.getTag();
         }
 
         String imgUrl = items.get(position).getProfileImageUrl();
 
-        if(itemProfileImage!=null){
+        if(holder.itemProfileImage!=null){
             GradientDrawable drawable=(GradientDrawable)context.getDrawable(R.drawable.profile_background_rounding);
-            itemProfileImage.setBackground(drawable);
-            itemProfileImage.setClipToOutline(true);
+            holder.itemProfileImage.setBackground(drawable);
+            holder.itemProfileImage.setClipToOutline(true);
         }
 
         final Handler handler = new Handler(Looper.myLooper());
+
         if(PreferenceManager.UPLOAD_URL.equals(imgUrl)){
-            Glide.with(context).load(R.drawable.user_profile_icon1).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(itemProfileImage);
+            Glide.with(context).load(R.drawable.user_profile_icon1).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(holder.itemProfileImage);
         }else {
             Glide.with(context).load(imgUrl).
                     listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            handler.post(() -> Glide.with(context).load(R.drawable.user_profile_icon1).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(itemProfileImage));
+                            handler.post(() -> Glide.with(context).load(R.drawable.user_profile_icon1).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(holder.itemProfileImage));
                             return false;
                         }
 
@@ -111,14 +107,14 @@ public class ProfileListAdapter extends BaseAdapter {
                             return false;
                         }
                     }).
-                    transform(new CenterCrop()).into(itemProfileImage);
+                    transform(new CenterCrop()).into(holder.itemProfileImage);
         }
 
-        if(itemName!=null) itemName.setText(items.get(position).getName());
-        if(itemPosition!=null) itemPosition.setText(items.get(position).getPosition());
-        if(itemJob!=null) itemJob.setText(items.get(position).getJob());
+        if(holder.itemName!=null) holder.itemName.setText(items.get(position).getName());
+        if(holder.itemPosition!=null) holder.itemPosition.setText(items.get(position).getPosition());
+        if(holder.itemJob!=null) holder.itemJob.setText(items.get(position).getJob());
 
-        return itemView;
+        return view;
     }
 
     static class ViewHolder{

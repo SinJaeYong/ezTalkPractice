@@ -34,6 +34,7 @@ public class PinLoginActivity extends AppCompatActivity {
     private LinkedList<Integer> pinPassList = new LinkedList<Integer>();
 
     private PinLoginActivityBinding binding;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
