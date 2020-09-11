@@ -15,9 +15,9 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.example.bizmekatalk.R;
-import com.example.bizmekatalk.databinding.PinButtonLayoutBinding;
 import com.example.bizmekatalk.databinding.PinLoginActivityBinding;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
@@ -26,9 +26,7 @@ import java.util.List;
 import java.util.Vector;
 
 public class PinLoginActivity extends AppCompatActivity {
-    private GridLayout pinGrid;
-    Animation pinDotsAni;
-
+    private Animation pinDotsAni;
     private List<ImageView> pinDots = new Vector<ImageView>();
     private List<TextView> pinBtns = new Vector<TextView>();
     private LinkedList<Integer> pinPassList = new LinkedList<Integer>();
@@ -38,12 +36,9 @@ public class PinLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = PinLoginActivityBinding.inflate(getLayoutInflater());
-        View lView = binding.getRoot();
-        setContentView(lView);
+        binding = DataBindingUtil.setContentView(this,R.layout.pin_login_activity);
+        binding.setPinLoginAct(this);
         getSupportActionBar().hide();
-        pinGrid = findViewById(R.id.pinGrid);
-
 
         //도트 부분 애니메이션 처리
         pinDotsAni = new TranslateAnimation(-20.0f,20.0f,0.0f,0.0f);
@@ -57,19 +52,15 @@ public class PinLoginActivity extends AppCompatActivity {
         }
 
         //핀 숫자버튼 생성
-        if(pinGrid != null){
-            for(int i = 0; i<10 ; i++){
-                TextView pin = pinGrid.findViewWithTag("pin"+String.valueOf(i));
-                final int pinNumber = i;
-                //숫자 버튼 클릭시
-                pin.setOnClickListener(view -> {
-                    //핀 Dot 이미지 변경 및 LinkedList에 핀값 저장
-                    setPins(pinNumber,PreferenceManager.PIN_MAX_COUNT);
-                });
-                pinBtns.add(pin);
-            }
-        }else {
-            Log.i(PreferenceManager.TAG,"pinGrid 생성 오류");
+        for(int i = 0; i<10 ; i++){
+            TextView pin = binding.pinButtons.pinGrid.findViewWithTag("pin"+String.valueOf(i));
+            final int pinNumber = i;
+            //숫자 버튼 클릭시
+            pin.setOnClickListener(view -> {
+                //핀 Dot 이미지 변경 및 LinkedList에 핀값 저장
+                setPins(pinNumber,PreferenceManager.PIN_MAX_COUNT);
+            });
+            pinBtns.add(pin);
         }
 
         //지우기 버튼

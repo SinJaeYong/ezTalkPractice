@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <data>
         <variable
-            name="pinLogin"
+            name="pinLoginAct"
             type="com.example.bizmekatalk.activity.PinLoginActivity" />
 
     </data>
@@ -64,8 +67,9 @@
             </LinearLayout>
 
             <include
-                android:id="@+id/pinButton"
-                layout="@layout/pin_button_layout" />
+                android:id="@+id/pinButtons"
+                layout="@layout/pin_button_layout"
+                />
 
             <RelativeLayout
                 android:layout_width="240dp"
