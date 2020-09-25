@@ -1,22 +1,19 @@
 package com.example.bizmekatalk.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bizmekatalk.R;
-import com.example.bizmekatalk.databinding.SplashBinding;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
 public class Splash extends AppCompatActivity {

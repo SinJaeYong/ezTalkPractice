@@ -1,7 +1,6 @@
 package com.example.bizmekatalk.activity;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,18 +9,17 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.SupportActionModeWrapper;
 
-import com.example.bizmekatalk.API.RequestAPI;
-import com.example.bizmekatalk.R;
+import com.example.bizmekatalk.api.common.ApiPath;
+import com.example.bizmekatalk.api.common.RequestParamBuilder;
+import com.example.bizmekatalk.api.webapi.common.WebApiController;
+import com.example.bizmekatalk.api.webapi.request.RequestAPI;
 import com.example.bizmekatalk.databinding.LoginActivityBinding;
-import com.example.bizmekatalk.items.RequestParams;
+import com.example.bizmekatalk.api.common.RequestParams;
 import com.example.bizmekatalk.utils.CustomDialog;
 
 import com.example.bizmekatalk.utils.PreferenceManager;
@@ -29,8 +27,6 @@ import com.example.bizmekatalk.utils.SoftKeyboard;
 import com.example.bizmekatalk.utils.Validation;
 import org.json.JSONException;
 import org.json.JSONObject;
-import retrofit2.Call;
-import retrofit2.Callback;
 
 public class LoginActivity extends AppCompatActivity {
     private SoftKeyboard softKeyboard;
@@ -45,14 +41,12 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-
         //로그인 버튼 클릭
         binding.loginBtn.setOnClickListener(view -> moveToPinRegister());
 
 
         //마지막 입력값에서 엔터 입력시 동작
         binding.compIdEdit.setOnEditorActionListener((textView, i, keyEvent) ->moveToPinRegister());
-
 
 
         //키보드 반응형 레이아웃 설정
@@ -88,38 +82,31 @@ public class LoginActivity extends AppCompatActivity {
     }//onCreate()
 
     private void createMyPost(RequestParams params){
-        RequestAPI requestAPI = new RequestAPI();
-        requestAPI.<String>getCall(params).ifPresent(call->{
-            call.enqueue(
-                    new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-                            String respBodyStr = response.body();
-                            String ltoken=null;
-                            try {
-                                ltoken = new JSONObject(respBodyStr).get("ltoken").toString();
-                                PreferenceManager.setString(LoginActivity.this,PreferenceManager.L_TOKEN,ltoken);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
 
-                            //null 처리
-                            if(!(("".equals(ltoken)) || (ltoken == null))){
-                                Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }else{
-                                Log.i(PreferenceManager.TAG,"토큰 저장 실패");
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-                            Log.i(PreferenceManager.TAG,"Response Fail");
-                            t.printStackTrace();
-                        }
+        RequestAPI requestAPI = new RequestAPI();
+
+        requestAPI.<String>getCall(params).ifPresent(call->{
+            new WebApiController<String>().request(call,(result)->{
+                if(result.isSuccess()){
+                    try {
+
+                        PreferenceManager.setString(LoginActivity.this,PreferenceManager.USER_ID, params.getBodyJson().get("userid").toString());
+                        PreferenceManager.setString(LoginActivity.this,PreferenceManager.COMP_ID, params.getBodyJson().get("compid").toString());
+                        PreferenceManager.setString(LoginActivity.this, PreferenceManager.L_TOKEN, new JSONObject(result.getData()).get("ltoken").toString());
+
+                        Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
+                        startActivity(intent);
+                        finish();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-            );
+                } else {
+                    Log.i("jay.LoginActivity","로그인 에러. request : "+result.getError());
+                }
+            });
         });
+
     }
 
 
@@ -128,34 +115,25 @@ public class LoginActivity extends AppCompatActivity {
     private boolean moveToPinRegister(){
         if(Validation.validateLogin(binding.userIdEdit, binding.userPwdEdit, binding.compIdEdit)){
 
-            String userid = "fhZ6hZSfV5UG/CjJEyTsUA==";
-            String compid = "P1Ao25+VqxuNq9ijelCnnw==";
-            String pwd = "1dBcLJsXZJkGl/WdAxYtcw==";
-            String type = "M";
-
-            //Json String으로 전달
-            String path = "Authentication/Login";
-            JSONObject bodyJson = new JSONObject();
-            try {
-                bodyJson.put("userid",userid);
-                bodyJson.put("compid",compid);
-                bodyJson.put("pwd",pwd);
-                bodyJson.put("type",type);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            PreferenceManager.setString(LoginActivity.this,PreferenceManager.USER_ID,userid);
-            PreferenceManager.setString(LoginActivity.this,PreferenceManager.COMP_ID,compid);
-            createMyPost(new RequestParams(path,null,bodyJson,PreferenceManager.HTTP_METHOD_POST));
+            createMyPost(
+                    new RequestParamBuilder(this.getBaseContext()).
+                            setPath(new ApiPath("Authentication","Login")).
+                            setBodyJson("userid","fhZ6hZSfV5UG/CjJEyTsUA==").
+                            setBodyJson("compid","P1Ao25+VqxuNq9ijelCnnw==").
+                            setBodyJson("pwd","1dBcLJsXZJkGl/WdAxYtcw==").
+                            setBodyJson("type","M").
+                            build()
+            );
 
         }
         else{
+
             CustomDialog customDialog = new CustomDialog(LoginActivity.this);
             customDialog.callFunction("입력 정보가 올바르지 않습니다.");
             return false;
+
         }
         return true;
     }//moveToPin
-
 
 }

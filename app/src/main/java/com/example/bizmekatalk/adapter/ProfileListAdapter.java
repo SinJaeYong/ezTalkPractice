@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.bizmekatalk.R;
+import com.example.bizmekatalk.holder.ProfileViewHolder;
 import com.example.bizmekatalk.items.ProfileItem;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
@@ -64,13 +65,13 @@ public class ProfileListAdapter extends BaseAdapter {
 
         final Context context = viewGroup.getContext();
         View view = itemView;
-        final ViewHolder holder;
+        final ProfileViewHolder holder;
 
 
         if(view == null){
             LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view=inflater.inflate(R.layout.profile_item,viewGroup,false);
-            holder = new ViewHolder();
+            holder = new ProfileViewHolder();
             holder.itemProfileImage = (ImageView)view.findViewById(R.id.itemProfileImage);
             holder.itemName = (TextView)view.findViewById(R.id.itemName);
             holder.itemPosition = (TextView)view.findViewById(R.id.itemPosition);
@@ -78,7 +79,7 @@ public class ProfileListAdapter extends BaseAdapter {
             view.setTag(holder);
         }
         else {
-            holder = (ViewHolder)view.getTag();
+            holder = (ProfileViewHolder)view.getTag();
         }
 
         String imgUrl = items.get(position).getProfileImageUrl();
@@ -117,12 +118,6 @@ public class ProfileListAdapter extends BaseAdapter {
         return view;
     }
 
-    static class ViewHolder{
-        ImageView itemProfileImage;
-        TextView itemName;
-        TextView itemPosition;
-        TextView itemJob;
-    }
 
 
 }

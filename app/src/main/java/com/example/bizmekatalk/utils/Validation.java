@@ -1,9 +1,8 @@
 package com.example.bizmekatalk.utils;
 
-import android.util.Log;
+
 import android.widget.EditText;
 
-import java.lang.reflect.Array;
 
 public class Validation {
 

@@ -8,4 +8,5 @@
     <color name="kaoni_blue">#0054FF</color>
     <color name="login_button">#2E64FE</color>
     <color name="login_button_pressed">#819FF7</color>
+    <color name="light_gray">#E6E6E6</color>
 </resources>

@@ -3,10 +3,12 @@ package com.example.bizmekatalk.items;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public class ProfileItem {
-    @Getter @Setter private String profileImageUrl;
-    @Getter @Setter private String name;
-    @Getter @Setter private String position;
-    @Getter @Setter private String job;
+    private String profileImageUrl;
+    private String name;
+    private String position;
+    private String job;
 
 }

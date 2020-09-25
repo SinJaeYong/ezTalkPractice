@@ -1,6 +1,5 @@
 package com.example.bizmekatalk.utils;
 
-import android.accessibilityservice.AccessibilityService;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;

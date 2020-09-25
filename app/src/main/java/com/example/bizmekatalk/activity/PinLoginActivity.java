@@ -26,12 +26,15 @@ import java.util.List;
 import java.util.Vector;
 
 public class PinLoginActivity extends AppCompatActivity {
+
+    private boolean pinLock=false;
+
     private Animation pinDotsAni;
     private List<ImageView> pinDots = new Vector<ImageView>();
     private List<TextView> pinBtns = new Vector<TextView>();
     private LinkedList<Integer> pinPassList = new LinkedList<Integer>();
-
     private PinLoginActivityBinding binding;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,12 +90,18 @@ public class PinLoginActivity extends AppCompatActivity {
 
     //핀값 저장 및 핀 이미지 변경
     private void setPins(int pinNumber,int maxCount) {
+
+        if(pinLock) return;
+
         pinPassList.addLast(pinNumber);
         pinDots.get(pinPassList.size()-1).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_blue,null));
-        Handler mHandler = new Handler(Looper.myLooper());
+
         if(pinPassList.size() == maxCount) {
-            mHandler.postDelayed(() -> validatePins(), 200); // 0.5초후
+            new Handler(Looper.myLooper()).postDelayed(() -> validatePins(), 200); // 0.5초후
+            pinLock = true;
         }
+
+
     }///setPins(int pinNumber,int maxCount)
 
 

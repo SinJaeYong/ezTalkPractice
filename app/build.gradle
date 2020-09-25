@@ -57,4 +57,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:1.18.10" //require for anotation
     compileOnly 'org.glassfish:javax.annotation:10.0-b28' // package javax.annotation does not exist solved
 
+    implementation "com.google.guava:guava:29.0-android"
+
+    implementation 'com.android.support:design:30.0.0'
 }

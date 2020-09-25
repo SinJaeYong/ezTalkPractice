@@ -5,18 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
+
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.databinding.PinRegisterActivityBinding;
 import com.example.bizmekatalk.utils.CustomDialog;
 import com.example.bizmekatalk.utils.PreferenceManager;

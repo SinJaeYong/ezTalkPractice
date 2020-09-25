@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_group"
+        android:icon="@drawable/navigation_group"
+        android:title="그룹" />
+    <item
+        android:id="@+id/navigation_chat"
+        android:icon="@drawable/navigation_chat"
+        android:title="채팅" />
+    <item
+        android:id="@+id/navigation_organ"
+        android:icon="@drawable/navigation_organ"
+        android:title="조직도" />
+    <item
+        android:id="@+id/navigation_setting"
+        android:icon="@drawable/navigation_setting"
+        android:title="설정" />
+</menu>

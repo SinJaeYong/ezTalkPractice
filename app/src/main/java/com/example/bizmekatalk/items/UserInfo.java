@@ -6,15 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 @AllArgsConstructor
 public class UserInfo {
     @SerializedName("userid")
-    @Getter @Setter private String userid;
+    private String userid;
     @SerializedName("compid")
-    @Getter @Setter private String compid;
+    private String compid;
     @SerializedName("pwd")
-    @Getter @Setter private String pwd;
+    private String pwd;
     @SerializedName("type")
-    @Getter @Setter private String type;
+    private String type;
 
 }
