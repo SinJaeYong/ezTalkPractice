@@ -49,7 +49,7 @@ public class RequestAPI {
          */
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(PreferenceManager.API_URL)
+                .baseUrl(PreferenceManager.getApiUrl())
                 .addConverterFactory( ScalarsConverterFactory.create() )
                 .build();
 

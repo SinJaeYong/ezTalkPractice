@@ -34,7 +34,7 @@ public class Splash extends AppCompatActivity {
             public void handleMessage(@NonNull Message msg) {
                 Intent intent;
                 //Preference에서 핀값 존재 유무 판별
-                if("".equals(PreferenceManager.getString(Splash.this,PreferenceManager.PIN_KEY))){
+                if("".equals(PreferenceManager.getString(PreferenceManager.PIN_KEY))){
                     intent = new Intent(Splash.this, LoginActivity.class);
                 }else{
                     intent = new Intent(Splash.this,PinLoginActivity.class);

@@ -53,33 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity);
         getSupportActionBar().hide();
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.frame_layout,organFragment).commitAllowingStateLoss();
-        bottomNavigationView.setSelectedItemId(R.id.navigation_organ);
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
-            FragmentTransaction trans = fragmentManager.beginTransaction();
-            switch (menuItem.getItemId()){
-                case R.id.navigation_group:{
-                    trans.replace(R.id.frame_layout,groupFragment).commitAllowingStateLoss();
-                    break;
-                }
-                case R.id.navigation_chat:{
-                    trans.replace(R.id.frame_layout,chatFragment).commitAllowingStateLoss();
-                    break;
-                }
-                case R.id.navigation_organ:{
-                    trans.replace(R.id.frame_layout,organFragment).commitAllowingStateLoss();
-                    break;
-                }
-                case R.id.navigation_setting:{
-                    trans.replace(R.id.frame_layout,settingFragment).commitAllowingStateLoss();
-                    break;
-                }
-            }
-            return true;
-        });
+        configureBottomNavigation();
 
         //ListView 및 Adapter 인스턴스
         //profile_list = findViewById(R.id.profile_list);
@@ -96,6 +70,45 @@ public class MainActivity extends AppCompatActivity {
          */
     }
 
+    private void configureBottomNavigation() {
+        setBottomNavigationViewListener(configureBottomNavigationLayout());
+    }
+
+    private BottomNavigationView configureBottomNavigationLayout() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.frame_layout, organFragment).commitAllowingStateLoss();
+        bottomNavigationView.setSelectedItemId(R.id.navigation_organ);
+        return bottomNavigationView;
+    }
+
+    private void setBottomNavigationViewListener(BottomNavigationView bottomNavigationView) {
+        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            FragmentTransaction trans = fragmentManager.beginTransaction();
+            switch (menuItem.getItemId()){
+                case R.id.navigation_group:{
+                    trans.replace(R.id.frame_layout,groupFragment).commitAllowingStateLoss();
+                    break;
+                }
+                case R.id.navigation_chat:{
+                    trans.replace(R.id.frame_layout,chatFragment).commitAllowingStateLoss();
+                    break;
+                }
+                case R.id.navigation_organ:{
+                    trans.replace(R.id.frame_layout, organFragment).commitAllowingStateLoss();
+                    break;
+                }
+                case R.id.navigation_setting:{
+                    trans.replace(R.id.frame_layout,settingFragment).commitAllowingStateLoss();
+                    break;
+                }
+            }
+            return true;
+        });
+    }
+
+
+
     private RequestParams setParams(){
         //GetAllUserInfo에 요청하기 위한 Url, RequestHeader 및 RequestBody 설정
         ApiPath apiPath = new ApiPath("OrgUserInfo","GetAllUserInfo");
@@ -108,10 +121,10 @@ public class MainActivity extends AppCompatActivity {
         int method = PreferenceManager.HTTP_METHOD_POST;
 
         try {
-            keyJson.put("userid",PreferenceManager.getString(this,PreferenceManager.USER_ID));
-            keyJson.put("compid",PreferenceManager.getString(this,PreferenceManager.COMP_ID));
-            keyJson.put("ltoken",PreferenceManager.getString(this,PreferenceManager.L_TOKEN));
-            bodyJson.put("compid",PreferenceManager.getString(this,PreferenceManager.COMP_ID));
+            keyJson.put("userid",PreferenceManager.getString(PreferenceManager.USER_ID));
+            keyJson.put("compid",PreferenceManager.getString(PreferenceManager.COMP_ID));
+            keyJson.put("ltoken",PreferenceManager.getString(PreferenceManager.L_TOKEN));
+            bodyJson.put("compid",PreferenceManager.getString(PreferenceManager.COMP_ID));
             bodyJson.put("lan",1);
         } catch (JSONException e) {
             e.printStackTrace();

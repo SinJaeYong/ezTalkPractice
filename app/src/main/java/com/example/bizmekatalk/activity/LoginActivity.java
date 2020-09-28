@@ -90,9 +90,9 @@ public class LoginActivity extends AppCompatActivity {
                 if(result.isSuccess()){
                     try {
 
-                        PreferenceManager.setString(LoginActivity.this,PreferenceManager.USER_ID, params.getBodyJson().get("userid").toString());
-                        PreferenceManager.setString(LoginActivity.this,PreferenceManager.COMP_ID, params.getBodyJson().get("compid").toString());
-                        PreferenceManager.setString(LoginActivity.this, PreferenceManager.L_TOKEN, new JSONObject(result.getData()).get("ltoken").toString());
+                        PreferenceManager.setString(PreferenceManager.USER_ID, params.getBodyJson().get("userid").toString());
+                        PreferenceManager.setString(PreferenceManager.COMP_ID, params.getBodyJson().get("compid").toString());
+                        PreferenceManager.setString(PreferenceManager.L_TOKEN, new JSONObject(result.getData()).get("ltoken").toString());
 
                         Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
                         startActivity(intent);
@@ -111,27 +111,24 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+
     //PinRegister로 이동하기 위하여 입력값 validate, token 저장 후 이동(동기처리를 위하여 delay 2초 대기)
     private boolean moveToPinRegister(){
         if(Validation.validateLogin(binding.userIdEdit, binding.userPwdEdit, binding.compIdEdit)){
+            RequestParams params = new RequestParamBuilder(this.getBaseContext()).
+                    setPath(new ApiPath("Authentication","Login")).
+                    setBodyJson("userid","fhZ6hZSfV5UG/CjJEyTsUA==").
+                    setBodyJson("compid","P1Ao25+VqxuNq9ijelCnnw==").
+                    setBodyJson("pwd","1dBcLJsXZJkGl/WdAxYtcw==").
+                    setBodyJson("type","M").
+                    build();
 
-            createMyPost(
-                    new RequestParamBuilder(this.getBaseContext()).
-                            setPath(new ApiPath("Authentication","Login")).
-                            setBodyJson("userid","fhZ6hZSfV5UG/CjJEyTsUA==").
-                            setBodyJson("compid","P1Ao25+VqxuNq9ijelCnnw==").
-                            setBodyJson("pwd","1dBcLJsXZJkGl/WdAxYtcw==").
-                            setBodyJson("type","M").
-                            build()
-            );
-
+            createMyPost(params);
         }
         else{
-
             CustomDialog customDialog = new CustomDialog(LoginActivity.this);
             customDialog.callFunction("입력 정보가 올바르지 않습니다.");
             return false;
-
         }
         return true;
     }//moveToPin

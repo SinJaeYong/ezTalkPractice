@@ -26,14 +26,14 @@ import com.example.bizmekatalk.holder.ProfileViewHolder;
 import com.example.bizmekatalk.items.ProfileItem;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class ProfileListAdapter extends BaseAdapter {
 
     private Context context;
 
-    private List<ProfileItem> items = new Vector<ProfileItem>();
+    private List<ProfileItem> items = new ArrayList<ProfileItem>();
 
 
     public ProfileListAdapter(Context context) {
@@ -82,6 +82,7 @@ public class ProfileListAdapter extends BaseAdapter {
             holder = (ProfileViewHolder)view.getTag();
         }
 
+        //////프로파일 이미지 처리
         String imgUrl = items.get(position).getProfileImageUrl();
 
         if(holder.itemProfileImage!=null){
@@ -110,10 +111,11 @@ public class ProfileListAdapter extends BaseAdapter {
                     }).
                     transform(new CenterCrop()).into(holder.itemProfileImage);
         }
+        ////////////////////////////
 
-        if(holder.itemName!=null) holder.itemName.setText(items.get(position).getName());
-        if(holder.itemPosition!=null) holder.itemPosition.setText(items.get(position).getPosition());
-        if(holder.itemJob!=null) holder.itemJob.setText(items.get(position).getJob());
+        if( holder.itemName != null ) holder.itemName.setText(items.get(position).getName());
+        if( holder.itemPosition != null ) holder.itemPosition.setText(items.get(position).getPosition());
+        if( holder.itemJob != null ) holder.itemJob.setText(items.get(position).getJob());
 
         return view;
     }

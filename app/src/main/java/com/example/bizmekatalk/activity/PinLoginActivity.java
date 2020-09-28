@@ -5,12 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -40,7 +37,7 @@ public class PinLoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.pin_login_activity);
-        binding.setPinLoginAct(this);
+        binding.setPinLoginActivity(this);
         getSupportActionBar().hide();
 
         //도트 부분 애니메이션 처리
@@ -74,7 +71,12 @@ public class PinLoginActivity extends AppCompatActivity {
                 pinDots.get(pinPassList.size()).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
             }
         });
+        setPinLoginClickListener();
 
+
+    }//onCreate
+
+    private void setPinLoginClickListener() {
         //로그인 버튼 동작
         binding.pinLogin.setOnClickListener(view -> {
             //LoginActivity 화면으로 이동
@@ -83,9 +85,7 @@ public class PinLoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
-
-    }//onCreate
+    }
 
 
     //핀값 저장 및 핀 이미지 변경
@@ -97,7 +97,7 @@ public class PinLoginActivity extends AppCompatActivity {
         pinDots.get(pinPassList.size()-1).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_blue,null));
 
         if(pinPassList.size() == maxCount) {
-            new Handler(Looper.myLooper()).postDelayed(() -> validatePins(), 200); // 0.5초후
+            new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200); // 0.5초후
             pinLock = true;
         }
 
@@ -106,17 +106,22 @@ public class PinLoginActivity extends AppCompatActivity {
 
 
 
-    //핀값 검증
-    private void validatePins(){
-        String pass = PreferenceManager.getString(PinLoginActivity.this,"pin");
-        StringBuffer buffer = new StringBuffer();
+    //
+    private boolean validatePin(){
 
+        String pass = PreferenceManager.getString("pin");
+        StringBuffer buffer = new StringBuffer();
         for(int i=0; i<pinPassList.size(); i++){
             pinDots.get(i).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
             buffer.append(pinPassList.get(i));
         }
+        return pass.equals(buffer.toString());
 
-        if(pass.equals(buffer.toString())){
+    }
+
+    private void moveToMain(){
+
+        if(validatePin()){
             Intent intent = new Intent(PinLoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();

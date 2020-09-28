@@ -23,9 +23,9 @@ public class RequestParamBuilder {
         JSONObject keyJson = new JSONObject();
 
         try {
-            keyJson.put("userid",PreferenceManager.getString(context,PreferenceManager.USER_ID));
-            keyJson.put("compid",PreferenceManager.getString(context,PreferenceManager.COMP_ID));
-            keyJson.put("ltoken",PreferenceManager.getString(context,PreferenceManager.L_TOKEN));
+            keyJson.put("userid",PreferenceManager.getString(PreferenceManager.USER_ID));
+            keyJson.put("compid",PreferenceManager.getString(PreferenceManager.COMP_ID));
+            keyJson.put("ltoken",PreferenceManager.getString(PreferenceManager.L_TOKEN));
         } catch (JSONException e) {
             e.printStackTrace();
         }

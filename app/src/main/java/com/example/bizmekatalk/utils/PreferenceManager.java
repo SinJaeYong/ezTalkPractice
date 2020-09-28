@@ -1,7 +1,10 @@
 package com.example.bizmekatalk.utils;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import com.example.bizmekatalk.activity.BizmekaApp;
 
 public class PreferenceManager {
 
@@ -18,6 +21,7 @@ public class PreferenceManager {
     public static final String TAG = "jay";
 
     public static final String PIN_KEY = "pin";
+    private final String addd = "pin";
 
     public static final String USER_ID = "userId";
 
@@ -49,53 +53,37 @@ public class PreferenceManager {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
 
     }
+
     /**
-
      * String 값 저장
-
-     * @param context
-
      * @param key
-
      * @param value
-
      */
 
-    public static void setString(Context context, String key, String value) {
-
-        SharedPreferences prefs = getPreferences(context);
-
+    public static void setString(String key, String value) {
+        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
         SharedPreferences.Editor editor = prefs.edit();
-
         editor.putString(key, value);
-
         editor.commit();
-
     }
 
 
 
-
+    public static String getApiUrl(){
+        return API_URL;
+    }
     /**
-
      * int 값 저장
-
      * @param context
-
      * @param key
-
      * @param value
-
      */
 
     public static void setInt(Context context, String key, int value) {
 
         SharedPreferences prefs = getPreferences(context);
-
         SharedPreferences.Editor editor = prefs.edit();
-
         editor.putInt(key, value);
-
         editor.commit();
 
     }
@@ -105,25 +93,17 @@ public class PreferenceManager {
 
 
     /**
-
      * float 값 저장
-
      * @param context
-
      * @param key
-
      * @param value
-
      */
 
     public static void setFloat(Context context, String key, float value) {
 
         SharedPreferences prefs = getPreferences(context);
-
         SharedPreferences.Editor editor = prefs.edit();
-
         editor.putFloat(key, value);
-
         editor.commit();
 
     }
@@ -131,25 +111,13 @@ public class PreferenceManager {
 
 
     /**
-
      * String 값 로드
-
-     * @param context
-
      * @param key
-
      * @return
-
      */
 
-    public static String getString(Context context, String key) {
-
-        SharedPreferences prefs = getPreferences(context);
-
-        String value = prefs.getString(key, DEFAULT_VALUE_STRING);
-
-        return value;
-
+    public static String getString(String key) {
+        return getPreferences(BizmekaApp.getAppContext()).getString(key, DEFAULT_VALUE_STRING);
     }
 
 
@@ -158,71 +126,45 @@ public class PreferenceManager {
 
 
     /**
-
      * int 값 로드
-
-     * @param context
-
      * @param key
-
      * @return
-
      */
 
-    public static int getInt(Context context, String key) {
-
-        SharedPreferences prefs = getPreferences(context);
-
+    public static int getInt(String key) {
+        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
         int value = prefs.getInt(key, DEFAULT_VALUE_INT);
-
         return value;
-
     }
 
 
 
 
     /**
-
      * float 값 로드
-
-     * @param context
-
      * @param key
-
      * @return
-
      */
 
-    public static float getFloat(Context context, String key) {
+    public static float getFloat(String key) {
 
-        SharedPreferences prefs = getPreferences(context);
-
+        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
         float value = prefs.getFloat(key, DEFAULT_VALUE_FLOAT);
-
         return value;
 
     }
 
 
     /**
-
      * 키 값 삭제
-
-     * @param context
-
      * @param key
-
      */
 
-    public static void removeKey(Context context, String key) {
+    public static void removeKey(String key) {
 
-        SharedPreferences prefs = getPreferences(context);
-
+        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
         SharedPreferences.Editor edit = prefs.edit();
-
         edit.remove(key);
-
         edit.commit();
 
     }
@@ -230,21 +172,14 @@ public class PreferenceManager {
 
 
     /**
-
      * 모든 저장 데이터 삭제
-
-     * @param context
-
      */
 
-    public static void clear(Context context) {
+    public static void clear() {
 
-        SharedPreferences prefs = getPreferences(context);
-
+        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
         SharedPreferences.Editor edit = prefs.edit();
-
         edit.clear();
-
         edit.commit();
 
     }

@@ -73,7 +73,7 @@ public class PinRegisterActivity extends AppCompatActivity {
     //입력값 검증,Pin값 저장 후 MainActivity로 이동
     private void moveToMain() {
         if(Validation.validatePin(binding.pinNum,binding.pinNumConf)){
-            PreferenceManager.setString(PinRegisterActivity.this, PreferenceManager.PIN_KEY, binding.pinNum.getText().toString());
+            PreferenceManager.setString(PreferenceManager.PIN_KEY, binding.pinNum.getText().toString());
             Intent intent = new Intent(PinRegisterActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -83,6 +83,7 @@ public class PinRegisterActivity extends AppCompatActivity {
             customDialog.callFunction("입력 정보가 올바르지 않습니다.");
         }
     }
+
 
 
     @Override

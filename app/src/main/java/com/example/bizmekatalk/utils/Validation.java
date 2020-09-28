@@ -17,12 +17,10 @@ public class Validation {
     }//loginValidation
 
     public static <T extends EditText> boolean validatePin(T... ts) {
-        String text = ts[0].getText().toString();
-        String text1 = ts[1].getText().toString();
-        if (text.length()<4||!isNumber(text)||!(text1.equals(text))) {
-            return false;
-        }
-        return true;
+        String pin1 = ts[0].getText().toString();
+        String pin2 = ts[1].getText().toString();
+
+        return pin1.equals(pin2);
     }//pinValidation
 
     public static boolean isNumber(String str) {

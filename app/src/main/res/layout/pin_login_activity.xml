@@ -6,9 +6,8 @@
 
     <data>
         <variable
-            name="pinLoginAct"
+            name="pinLoginActivity"
             type="com.example.bizmekatalk.activity.PinLoginActivity" />
-
     </data>
 
     <LinearLayout
