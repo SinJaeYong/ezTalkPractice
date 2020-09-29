@@ -24,7 +24,7 @@ public class WebApiClient {
 
     public static Retrofit getDomainClient(){
         boolean isSsl = false;
-        ServerInfo dao = new ServerInfo(PreferenceManager.API_SERVER_DOMAIN,PreferenceManager.API_SERVER_PORT,isSsl);
+        ServerInfo dao = new ServerInfo(PreferenceManager.getApiServerDomain(),PreferenceManager.getApiServerPort(),isSsl);
         return getOrCreateRetrofit(dao);
     }
 

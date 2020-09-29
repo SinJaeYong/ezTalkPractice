@@ -30,49 +30,66 @@ public class OrganFragment extends Fragment {
 
     private OrganFragmentBinding binding;
 
-    private DeptListAdapter adapter;
+    private DeptListAdapter adapter = new DeptListAdapter(getActivity());
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        binding = DataBindingUtil.setContentView(getActivity(),R.layout.organ_fragment);
-        binding.setOrganFragment(this);
+        setDataBinding();
+
+        requestCall();
+
+        binding.deptList.setAdapter(adapter);
+
+        return inflater.inflate(R.layout.organ_fragment, container,false);
+    }
 
 
-        RequestParams params = new RequestParamBuilder(getActivity()).
-                setPath(new ApiPath("OrgDeptInfo","GetAllDeptInfo")).
-                setBodyJson("compid",PreferenceManager.getString(PreferenceManager.COMP_ID)).
-                setBodyJson("lan",1).
-                build();
 
-        new RequestAPI().<String>getCall(params).ifPresent(call->{
+    private void requestCall() {
+        //Request 동작
+        new RequestAPI().<String>getCall(setRequestParams()).ifPresent(call->{
             new WebApiController<String>().request(call,(result)->{
                 if(result.isSuccess()){
                     String deptResult = result.getData();
-                    try {
-                        JSONArray jsonArr = new JSONArray(deptResult);
-                        for(int i = 0 ; i < jsonArr.length() ; i++){
-                            JSONObject json = new JSONObject(jsonArr.get(i).toString());
-                            String temp = json.get("deptname").toString();
-                            adapter.updateItems(temp);
-                            //Log.i("jay.OrganFragment","json : "+temp);
-                        }
-                        adapter.notifyDataSetChanged();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    updateItems(deptResult);
                 } else {
                     Log.i("jay.OrganFragment","에러. request : "+result.getError());
                 }
             });
         });
+    }
 
-        adapter = new DeptListAdapter(getActivity());
 
-        binding.deptList.setAdapter(adapter);
+    private void updateItems(String deptResult) {
+        try {
+            JSONArray jsonArr = new JSONArray(deptResult);
+            for(int i = 0 ; i < jsonArr.length() ; i++){
+                JSONObject json = new JSONObject(jsonArr.get(i).toString());
+                String temp = json.get("deptname").toString();
+                adapter.updateItems(temp);
+                //Log.i("jay.OrganFragment","json : "+temp);
+            }
+            adapter.notifyDataSetChanged();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-        return inflater.inflate(R.layout.organ_fragment,container,false);
+
+    private void setDataBinding() {
+        //dataBinding
+        binding = DataBindingUtil.setContentView(getActivity(),R.layout.organ_fragment);
+        binding.setOrganFragment(this);
+    }
+
+    private RequestParams setRequestParams() {
+        return new RequestParamBuilder(getActivity()).
+                setPath(new ApiPath("OrgDeptInfo","GetAllDeptInfo")).
+                setBodyJson("compid", PreferenceManager.getString(PreferenceManager.getCompId())).
+                setBodyJson("lan",1).
+                build();
     }
 
 }

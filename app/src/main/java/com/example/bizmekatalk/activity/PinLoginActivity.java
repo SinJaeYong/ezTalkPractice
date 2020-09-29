@@ -36,33 +36,26 @@ public class PinLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setDataBinding();
+
+        setPinDotsImage();
+
+        setPinButtons();
+
+        setListener();
+
+    }//onCreate
+
+
+
+    private void setDataBinding() {
         binding = DataBindingUtil.setContentView(this,R.layout.pin_login_activity);
         binding.setPinLoginActivity(this);
         getSupportActionBar().hide();
+    }
 
-        //도트 부분 애니메이션 처리
-        pinDotsAni = new TranslateAnimation(-20.0f,20.0f,0.0f,0.0f);
-        pinDotsAni.setDuration(50);
-        pinDotsAni.setRepeatMode(Animation.REVERSE);
-        pinDotsAni.setRepeatCount(4);
-
-        //핀 Dot 이미지 생성
-        for(int i=0; i<4; i++){
-            pinDots.add((ImageView)binding.pinLinear.findViewWithTag("pinDot"+String.valueOf(i)));
-        }
-
-        //핀 숫자버튼 생성
-        for(int i = 0; i<10 ; i++){
-            TextView pin = binding.pinButtons.pinGrid.findViewWithTag("pin"+String.valueOf(i));
-            final int pinNumber = i;
-            //숫자 버튼 클릭시
-            pin.setOnClickListener(view -> {
-                //핀 Dot 이미지 변경 및 LinkedList에 핀값 저장
-                setPins(pinNumber,PreferenceManager.PIN_MAX_COUNT);
-            });
-            pinBtns.add(pin);
-        }
-
+    private void setListener() {
         //지우기 버튼
         binding.pinRemove.setOnClickListener(view -> {
             if(pinPassList.size()>0){
@@ -71,20 +64,41 @@ public class PinLoginActivity extends AppCompatActivity {
                 pinDots.get(pinPassList.size()).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
             }
         });
-        setPinLoginClickListener();
 
-
-    }//onCreate
-
-    private void setPinLoginClickListener() {
         //로그인 버튼 동작
         binding.pinLogin.setOnClickListener(view -> {
             //LoginActivity 화면으로 이동
-            PreferenceManager.clear(PinLoginActivity.this);
+            PreferenceManager.clear();
             Intent intent = new Intent(PinLoginActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         });
+    }
+
+    private void setPinButtons() {
+        for(int i = 0; i< PreferenceManager.getPinButtonCount() ; i++){
+            TextView pin = binding.pinButtons.pinGrid.findViewWithTag("pin"+String.valueOf(i));
+            final int pinNumber = i;
+            //숫자 버튼 클릭시
+            pin.setOnClickListener(view -> {
+                //핀 Dot 이미지 변경 및 LinkedList에 핀값 저장
+                setPins(pinNumber,PreferenceManager.getPinMaxCount());
+            });
+            pinBtns.add(pin);
+        }
+
+    }
+
+    private void setPinDotsImage() {
+        //도트 부분 애니메이션 처리
+        pinDotsAni = new TranslateAnimation(-20.0f,20.0f,0.0f,0.0f);
+        pinDotsAni.setDuration(50);
+        pinDotsAni.setRepeatMode(Animation.REVERSE);
+        pinDotsAni.setRepeatCount(4);
+        //핀 Dot 이미지 생성
+        for(int i = 0; i< PreferenceManager.getPinMaxCount(); i++){
+            pinDots.add((ImageView)binding.pinLinear.findViewWithTag("pinDot"+String.valueOf(i)));
+        }
     }
 
 
@@ -109,12 +123,16 @@ public class PinLoginActivity extends AppCompatActivity {
     //
     private boolean validatePin(){
 
-        String pass = PreferenceManager.getString("pin");
+        //사용자 핀 설정
+        String pass = PreferenceManager.getString(PreferenceManager.getPinKey());
+
+        //입력 핀 설정
         StringBuffer buffer = new StringBuffer();
         for(int i=0; i<pinPassList.size(); i++){
             pinDots.get(i).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
             buffer.append(pinPassList.get(i));
         }
+
         return pass.equals(buffer.toString());
 
     }

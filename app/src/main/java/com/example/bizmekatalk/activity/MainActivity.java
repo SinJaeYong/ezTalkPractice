@@ -50,25 +50,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.main_activity);
+
         getSupportActionBar().hide();
 
         configureBottomNavigation();
-
-        //ListView 및 Adapter 인스턴스
-        //profile_list = findViewById(R.id.profile_list);
-        //adapter = new ProfileListAdapter(this);
-
-        //GetAllUserInfo 요청처리
-        //getAllItems(setRequestParam());
-
-        //ListView 스크롤 반응 처리
-        /*
-        if(profile_list != null) {
-            scrolledDataUpdate();
-        }
-         */
     }
+
+
+
 
     private void configureBottomNavigation() {
         setBottomNavigationViewListener(configureBottomNavigationLayout());
@@ -118,13 +109,13 @@ public class MainActivity extends AppCompatActivity {
 
         JSONObject bodyJson = new JSONObject();
 
-        int method = PreferenceManager.HTTP_METHOD_POST;
+        int method = PreferenceManager.getHttpMethodPost();
 
         try {
-            keyJson.put("userid",PreferenceManager.getString(PreferenceManager.USER_ID));
-            keyJson.put("compid",PreferenceManager.getString(PreferenceManager.COMP_ID));
-            keyJson.put("ltoken",PreferenceManager.getString(PreferenceManager.L_TOKEN));
-            bodyJson.put("compid",PreferenceManager.getString(PreferenceManager.COMP_ID));
+            keyJson.put("userid",PreferenceManager.getString(PreferenceManager.getUserId()));
+            keyJson.put("compid",PreferenceManager.getString(PreferenceManager.getCompId()));
+            keyJson.put("ltoken",PreferenceManager.getString(PreferenceManager.getlToken()));
+            bodyJson.put("compid",PreferenceManager.getString(PreferenceManager.getCompId()));
             bodyJson.put("lan",1);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -144,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastitemVisibleFlag) {
                         Log.i(PreferenceManager.TAG,"스크롤의 끝 "+currentItemCount);
                         int i =0;
-                        while((adapter.getCount() < allItems.size()) && (i < PreferenceManager.PROFILE_LIST_STEP)){
+                        while((adapter.getCount() < allItems.size()) && (i < PreferenceManager.getProfileListStep())){
                             adapter.updateItems(allItems.get(currentItemCount));
                             currentItemCount++;
                             i++;
@@ -177,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                         for(int i=0;i<jsonArr.length();i++){
                             ProfileItem item = new ProfileItem();
                             String profileImage = jsonArr.getJSONObject(i).getString("profileimage");
-                            String profileImgUrl = PreferenceManager.UPLOAD_URL + profileImage;
+                            String profileImgUrl = PreferenceManager.getUploadUrl() + profileImage;
                             item.setProfileImageUrl(profileImgUrl);
                             item.setName(jsonArr.getJSONObject(i).getString("name"));
                             tempStr = jsonArr.getJSONObject(i).getString("position");
@@ -192,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //ListView 첫 화면에 표시할 정보 Adapter에 전달
                     int i=0;
-                    while((adapter.getCount() < allItems.size()) &&(i < PreferenceManager.PROFILE_LIST_STEP)){
+                    while((adapter.getCount() < allItems.size()) &&(i < PreferenceManager.getProfileListStep())){
                         adapter.updateItems(allItems.get(i));
                         i++;
                     }

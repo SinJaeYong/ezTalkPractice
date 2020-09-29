@@ -1,6 +1,8 @@
 package com.example.bizmekatalk.api.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,16 +16,11 @@ public class ApiPath {
     private LinkedList<String> pathList = new LinkedList<String>();
 
     public ApiPath(String ... pathNames) {
-        for(String path : pathNames){
-            pathList.add(path);
-        }
+        Collections.addAll(pathList, pathNames);
     }
 
     public ApiPath replace(String ... pathNames){
-        pathList.clear();
-        for(String path : pathNames){
-            pathList.add(path);
-        }
+        Collections.addAll(pathList, pathNames);
         return this;
     }
 
@@ -45,11 +42,8 @@ public class ApiPath {
     @Override
     public String toString() {
         StringBuffer buf = new StringBuffer("");
-        for(String path : pathList){
-            buf.append(path.trim()+"/");
-        }
+        pathList.stream().forEach(path->buf.append(path.trim()+"/"));
         buf.deleteCharAt(buf.length());
-
         return ( buf.length() == 0 ) ? "" : buf.deleteCharAt(buf.length()-1).toString();
     }
 }

@@ -62,29 +62,35 @@ public class ProfileListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View itemView, ViewGroup viewGroup) {
-
         final Context context = viewGroup.getContext();
         View view = itemView;
-        final ProfileViewHolder holder;
+        setHolder(initHolder(itemView,viewGroup),position);
+        return view;
+    }
 
 
-        if(view == null){
+    private ProfileViewHolder initHolder(View view, ViewGroup viewGroup){
+        if( view == null ){
             LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view=inflater.inflate(R.layout.profile_item,viewGroup,false);
-            holder = new ProfileViewHolder();
+
+            ProfileViewHolder holder = new ProfileViewHolder();
             holder.itemProfileImage = (ImageView)view.findViewById(R.id.itemProfileImage);
             holder.itemName = (TextView)view.findViewById(R.id.itemName);
             holder.itemPosition = (TextView)view.findViewById(R.id.itemPosition);
             holder.itemJob = (TextView)view.findViewById(R.id.itemJob);
             view.setTag(holder);
+            return holder;
         }
         else {
-            holder = (ProfileViewHolder)view.getTag();
+            return (ProfileViewHolder)view.getTag();
         }
+    };
 
-        //////프로파일 이미지 처리
+
+    private void setHolder(ProfileViewHolder holder, int position){
+
         String imgUrl = items.get(position).getProfileImageUrl();
-
         if(holder.itemProfileImage!=null){
             GradientDrawable drawable=(GradientDrawable)context.getDrawable(R.drawable.profile_background_rounding);
             holder.itemProfileImage.setBackground(drawable);
@@ -93,7 +99,7 @@ public class ProfileListAdapter extends BaseAdapter {
 
         final Handler handler = new Handler(Looper.myLooper());
 
-        if(PreferenceManager.UPLOAD_URL.equals(imgUrl)){
+        if(PreferenceManager.getUploadUrl().equals(imgUrl)){
             Glide.with(context).load(R.drawable.user_profile_icon1).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(holder.itemProfileImage);
         }else {
             Glide.with(context).load(imgUrl).
@@ -116,8 +122,6 @@ public class ProfileListAdapter extends BaseAdapter {
         if( holder.itemName != null ) holder.itemName.setText(items.get(position).getName());
         if( holder.itemPosition != null ) holder.itemPosition.setText(items.get(position).getPosition());
         if( holder.itemJob != null ) holder.itemJob.setText(items.get(position).getJob());
-
-        return view;
     }
 
 

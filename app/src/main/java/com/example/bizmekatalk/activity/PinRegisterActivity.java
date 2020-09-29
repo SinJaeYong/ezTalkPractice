@@ -29,17 +29,37 @@ public class PinRegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setDataBinding();
+
+        setListener();
+
+        setReactiveKeyboard();
+    }
+
+
+
+
+
+
+    private void setDataBinding() {
         binding = PinRegisterActivityBinding.inflate(getLayoutInflater());
         View lView = binding.getRoot();
         setContentView(lView);
         getSupportActionBar().hide();
+    }
+
+
+    private void setListener() {
         binding.pinUpdateBtn.setOnClickListener(view -> moveToMain());
         binding.pinNumConf.setOnEditorActionListener((textView, i, keyEvent) -> {
             moveToMain();
             return true;
         });
+    }
 
 
+    private void setReactiveKeyboard() {
         //키보드 반응형 레이아웃 설정
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         softKeyboard = new SoftKeyboard(binding.pinLayout,im);
@@ -65,15 +85,15 @@ public class PinRegisterActivity extends AppCompatActivity {
                 });
             }
         };
-        softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);//setSoftKeyboardCallback
 
+        softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);//setSoftKeyboardCallback
     }
 
 
     //입력값 검증,Pin값 저장 후 MainActivity로 이동
     private void moveToMain() {
         if(Validation.validatePin(binding.pinNum,binding.pinNumConf)){
-            PreferenceManager.setString(PreferenceManager.PIN_KEY, binding.pinNum.getText().toString());
+            PreferenceManager.setString(PreferenceManager.getPinKey(), binding.pinNum.getText().toString());
             Intent intent = new Intent(PinRegisterActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -84,14 +104,10 @@ public class PinRegisterActivity extends AppCompatActivity {
         }
     }
 
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         softKeyboard.unRegisterSoftKeyboardCallback();
     }
-
-
 
 }

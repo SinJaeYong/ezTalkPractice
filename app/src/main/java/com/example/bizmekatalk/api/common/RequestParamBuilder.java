@@ -18,14 +18,14 @@ public class RequestParamBuilder {
 
     public RequestParamBuilder(Context context) {
 
-        method = PreferenceManager.HTTP_METHOD_POST;
+        method = PreferenceManager.getHttpMethodPost();
 
         JSONObject keyJson = new JSONObject();
 
         try {
-            keyJson.put("userid",PreferenceManager.getString(PreferenceManager.USER_ID));
-            keyJson.put("compid",PreferenceManager.getString(PreferenceManager.COMP_ID));
-            keyJson.put("ltoken",PreferenceManager.getString(PreferenceManager.L_TOKEN));
+            keyJson.put("userid",PreferenceManager.getString(PreferenceManager.getUserId()));
+            keyJson.put("compid",PreferenceManager.getString(PreferenceManager.getCompId()));
+            keyJson.put("ltoken",PreferenceManager.getString(PreferenceManager.getlToken()));
         } catch (JSONException e) {
             e.printStackTrace();
         }

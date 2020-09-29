@@ -35,21 +35,40 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setViewBinding();
+
+        setListener();
+
+        //키보드 반응형 레이아웃 설정
+        setReactiveKeyboard();
+
+
+    }//onCreate()
+
+
+
+
+    private void setListener() {
+        //로그인 버튼 클릭
+        binding.loginBtn.setOnClickListener(view -> moveToPinRegister());
+        //마지막 입력값에서 엔터 입력시 동작
+        binding.compIdEdit.setOnEditorActionListener((textView, i, keyEvent) ->moveToPinRegister());
+    }
+
+
+    private void setViewBinding() {
         binding = LoginActivityBinding.inflate(getLayoutInflater());
         View lView = binding.getRoot();
         setContentView(lView);
         getSupportActionBar().hide();
+    }
 
 
-        //로그인 버튼 클릭
-        binding.loginBtn.setOnClickListener(view -> moveToPinRegister());
 
-
-        //마지막 입력값에서 엔터 입력시 동작
-        binding.compIdEdit.setOnEditorActionListener((textView, i, keyEvent) ->moveToPinRegister());
-
-
-        //키보드 반응형 레이아웃 설정
+    //클래스로 뺄 시에 필요한 param
+    //
+    private void setReactiveKeyboard() {
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         softKeyboard = new SoftKeyboard(binding.loginLayout,im);
         //code convention
@@ -76,23 +95,23 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         };
-        softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);//setSoftKeyboardCallback
+        softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);
+    }
 
 
-    }//onCreate()
+
 
     private void createMyPost(RequestParams params){
 
         RequestAPI requestAPI = new RequestAPI();
-
         requestAPI.<String>getCall(params).ifPresent(call->{
             new WebApiController<String>().request(call,(result)->{
                 if(result.isSuccess()){
                     try {
 
-                        PreferenceManager.setString(PreferenceManager.USER_ID, params.getBodyJson().get("userid").toString());
-                        PreferenceManager.setString(PreferenceManager.COMP_ID, params.getBodyJson().get("compid").toString());
-                        PreferenceManager.setString(PreferenceManager.L_TOKEN, new JSONObject(result.getData()).get("ltoken").toString());
+                        PreferenceManager.setString(PreferenceManager.getUserId(), params.getBodyJson().get("userid").toString());
+                        PreferenceManager.setString(PreferenceManager.getCompId(), params.getBodyJson().get("compid").toString());
+                        PreferenceManager.setString(PreferenceManager.getlToken(), new JSONObject(result.getData()).get("ltoken").toString());
 
                         Intent intent = new Intent(LoginActivity.this, PinRegisterActivity.class);
                         startActivity(intent);
@@ -108,7 +127,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
-
 
 
 

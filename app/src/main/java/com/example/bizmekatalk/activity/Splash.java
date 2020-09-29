@@ -22,31 +22,32 @@ public class Splash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
         getSupportActionBar().hide();
-        /*
-        //Splash 애니메이션 처리
-        ImageView imageView = findViewById(R.id.loading);
-        Animation ani = AnimationUtils.loadAnimation(this, R.anim.appear_logo);
-        imageView.startAnimation(ani);
-         */
 
-        Handler handler = new Handler(Looper.myLooper()){
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                Intent intent;
-                //Preference에서 핀값 존재 유무 판별
-                if("".equals(PreferenceManager.getString(PreferenceManager.PIN_KEY))){
-                    intent = new Intent(Splash.this, LoginActivity.class);
-                }else{
-                    intent = new Intent(Splash.this,PinLoginActivity.class);
-                }
-                startActivity(intent);
-                finish();
-            }
-        };
+        Handler handler = getHandler();
+
         if(handler != null){
             handler.sendEmptyMessageDelayed(0,500);
         }else{
             Log.i(PreferenceManager.TAG,"Splash 오류");
         }
+    }
+
+
+
+
+    private Handler getHandler() {
+        return new Handler(Looper.myLooper()){
+                @Override
+                public void handleMessage(@NonNull Message msg) {
+                    Intent intent;
+                    if("".equals(PreferenceManager.getString(PreferenceManager.getPinKey()))){
+                        intent = new Intent(Splash.this, LoginActivity.class);
+                    }else{
+                        intent = new Intent(Splash.this, PinLoginActivity.class);
+                    }
+                    startActivity(intent);
+                    finish();
+                }
+            };
     }
 }
