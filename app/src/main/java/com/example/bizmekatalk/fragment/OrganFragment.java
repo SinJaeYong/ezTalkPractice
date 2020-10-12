@@ -20,11 +20,9 @@ import com.example.bizmekatalk.api.common.RequestParams;
 
 import com.example.bizmekatalk.api.webapi.common.WebApiController;
 import com.example.bizmekatalk.api.webapi.request.RequestAPI;
-import com.example.bizmekatalk.crypto.AES256Cipher;
 import com.example.bizmekatalk.databinding.OrganFragmentBinding;
 import com.example.bizmekatalk.items.DeptItem;
 import com.example.bizmekatalk.utils.PreferenceManager;
-import com.google.gson.internal.LinkedTreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,12 +47,16 @@ public class OrganFragment extends Fragment {
         binding.setOrganFragment(this);
 
         //cyperCheck();
-
-        adapter.updateAdapter(setRequestParams(""),"add");
+        //adapter.updateAdapter(setRequestParams(""),"add");
+        callAPI(setDeptRequestParams(),adapter);
 
         binding.btnDeptBack.setOnClickListener(v -> {
-            Log.i("jay.OrganFragment","back");
-            adapter.updateAdapter(setRequestParams(adapter.preDeptId),"reset");
+            if(adapter.navi.size() > 1)
+                adapter.navi.removeLast();
+            Log.i("jay.navi","navi.gitList : "+adapter.navi.getLast());
+            adapter.updateItems(adapter.getMap().get(adapter.navi.getLast()));
+            adapter.notifyDataSetChanged();
+            //adapter.updateAdapter(setRequestParams(adapter.preDeptId),"reset");
         });
 
         binding.lvDeptList.setAdapter(adapter);
@@ -62,15 +64,14 @@ public class OrganFragment extends Fragment {
     }
 
 
-    private void callAPI(@javax.annotation.Nullable RequestParams params, CustomAdapter adapter, String mode) {
+    private void callAPI(@javax.annotation.Nullable RequestParams params, CustomAdapter adapter) {
         new RequestAPI().<String>getCall(params).ifPresent(call->{
-            setRequestCallBack(call, adapter, mode);
+            setRequestCallBack(call, adapter);
         });
     }
 
 
-    private static void setRequestCallBack(Call<String> call, CustomAdapter adapter, String mode) {
-        Log.i("jay.OrganFragment","mode : "+mode);
+    private static void setRequestCallBack(Call<String> call, CustomAdapter adapter) {
         new WebApiController<String>().request(call,(result)->{
             if(result.isSuccess()){
                 String resultData = result.getData();
@@ -79,7 +80,6 @@ public class OrganFragment extends Fragment {
                     JSONArray jsonArr = new JSONArray(resultData);
                     List<JSONObject> list = new ArrayList<JSONObject>();
                     for(int i = 0 ; i < jsonArr.length() ; i++){
-                        DeptItem item = new DeptItem();
                         JSONObject json = new JSONObject(jsonArr.get(i).toString());
                         list.add(json);
                     }
@@ -91,7 +91,10 @@ public class OrganFragment extends Fragment {
                             return "";
                         }
                     }));
+                    Log.i("jay.OrganFragment","list : "+map.get("").toString());
                     ((DeptListAdapter)adapter).setMap(map);
+                    ((DeptListAdapter)adapter).initNavi("");
+                    Log.i("jay.navi","navi.gitList : "+((DeptListAdapter)adapter).navi.getLast());
                     adapter.updateItems(map.get(""));
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
@@ -103,7 +106,7 @@ public class OrganFragment extends Fragment {
         });
     }
 
-    private RequestParams setRequestParams(String parentDeptId) {
+    private RequestParams setDeptRequestParams() {
         return new RequestParamBuilder().
                 setPath(new ApiPath("OrgDeptInfo","GetAllDeptInfo")).
                 setBodyJson("compid", PreferenceManager.getString(PreferenceManager.getCompId())).
@@ -111,15 +114,13 @@ public class OrganFragment extends Fragment {
                 build();
     }
 
-    private void cyperCheck(){
-        String encryptJAVA = AES256Cipher.stringToEncryptStringWithJava("s907000");
-        String decryptJAVA = AES256Cipher.stringToDecryptionStringWithJava(encryptJAVA);
-        String encryptBiz = AES256Cipher.stringToEncryptStringWithBizmeka("s907000");
-        String decryptBiz = AES256Cipher.stringToDecryptionStringWithBizmeka(encryptBiz);
-        Log.i("jay.OrganFragment","preference compid : " + PreferenceManager.getString(PreferenceManager.getCompId()));
-        Log.i("jay.OrganFragment","encrypt with JAVA: " + encryptJAVA);
-        Log.i("jay.OrganFragment","decrypt with JAVA: " + decryptJAVA);
-        Log.i("jay.OrganFragment","encrypt with Bizmeka: " + encryptBiz);
-        Log.i("jay.OrganFragment","decrypt with Bizmeka: " + decryptBiz);
+    private RequestParams setUserRequestParams(String ... params){
+        return new RequestParamBuilder().
+                setPath(new ApiPath("OrgDeptInfo","GetAllDeptInfo")).
+                setBodyJson("compid", PreferenceManager.getString(PreferenceManager.getCompId())).
+                setBodyJson("lan",1).
+                build();
     }
+
+
 }
