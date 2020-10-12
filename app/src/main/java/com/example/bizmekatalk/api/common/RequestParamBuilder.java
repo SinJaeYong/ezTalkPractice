@@ -16,7 +16,7 @@ public class RequestParamBuilder {
     private Map<String,String> headerMap = new HashMap<String,String>();
     private int method;
 
-    public RequestParamBuilder(Context context) {
+    public RequestParamBuilder() {
 
         method = PreferenceManager.getHttpMethodPost();
 

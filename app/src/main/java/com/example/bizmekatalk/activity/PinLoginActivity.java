@@ -53,6 +53,7 @@ public class PinLoginActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this,R.layout.pin_login_activity);
         binding.setPinLoginActivity(this);
         getSupportActionBar().hide();
+
     }
 
     private void setListener() {
@@ -111,8 +112,8 @@ public class PinLoginActivity extends AppCompatActivity {
         pinDots.get(pinPassList.size()-1).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_blue,null));
 
         if(pinPassList.size() == maxCount) {
-            new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200); // 0.5초후
             pinLock = true;
+            new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200); // 0.5초후
         }
 
 
@@ -146,6 +147,7 @@ public class PinLoginActivity extends AppCompatActivity {
         }else{
             binding.pinLinear.startAnimation(pinDotsAni);
             Log.i(PreferenceManager.TAG,"핀 로그인 입력 오류");
+            pinLock = false;
         }
 
         pinPassList.clear();

@@ -85,6 +85,7 @@
                 android:gravity="center"
                 >
                 <Button
+                    android:id="@+id/btnDeptBack"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/n_btn_organ_back"
@@ -155,7 +156,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ListView
-                android:id="@+id/deptList"
+                android:id="@+id/lvDeptList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 />

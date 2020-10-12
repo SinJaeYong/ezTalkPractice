@@ -41,7 +41,11 @@ public class LoginActivity extends AppCompatActivity {
         setListener();
 
         //키보드 반응형 레이아웃 설정
-        setReactiveKeyboard();
+        softKeyboard = SoftKeyboard.setReactiveKeyboard(this,
+                binding.loginLayout,
+                binding.loginImgLayout,
+                binding.loginTextLayout);
+        //setReactiveKeyboard();
 
 
     }//onCreate()
@@ -62,40 +66,6 @@ public class LoginActivity extends AppCompatActivity {
         View lView = binding.getRoot();
         setContentView(lView);
         getSupportActionBar().hide();
-    }
-
-
-
-    //클래스로 뺄 시에 필요한 param
-    //
-    private void setReactiveKeyboard() {
-        InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
-        softKeyboard = new SoftKeyboard(binding.loginLayout,im);
-        //code convention
-        SoftKeyboard.SoftKeyboardChanged softKeyboardChanged = new SoftKeyboard.SoftKeyboardChanged() {
-            ViewGroup.LayoutParams param1;
-            ViewGroup.LayoutParams param2;
-            @Override
-            public void onSoftKeyboardShow() {
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.setMargins(0,0,0,0);
-                    param1 = binding.loginImgLayout.getLayoutParams();
-                    param2 = binding.loginTextLayout.getLayoutParams();
-                    binding.loginImgLayout.setLayoutParams(params);
-                    binding.loginTextLayout.setLayoutParams(params);
-                });
-            }
-
-            @Override
-            public void onSoftKeyboardHide() {
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    binding.loginImgLayout.setLayoutParams(param1);
-                    binding.loginTextLayout.setLayoutParams(param2);
-                });
-            }
-        };
-        softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);
     }
 
 
@@ -133,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     //PinRegister로 이동하기 위하여 입력값 validate, token 저장 후 이동(동기처리를 위하여 delay 2초 대기)
     private boolean moveToPinRegister(){
         if(Validation.validateLogin(binding.userIdEdit, binding.userPwdEdit, binding.compIdEdit)){
-            RequestParams params = new RequestParamBuilder(this.getBaseContext()).
+            RequestParams params = new RequestParamBuilder().
                     setPath(new ApiPath("Authentication","Login")).
                     setBodyJson("userid","fhZ6hZSfV5UG/CjJEyTsUA==").
                     setBodyJson("compid","P1Ao25+VqxuNq9ijelCnnw==").
@@ -151,4 +121,9 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }//moveToPin
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        softKeyboard.unRegisterSoftKeyboardCallback();
+    }
 }

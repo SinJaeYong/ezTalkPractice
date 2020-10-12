@@ -34,7 +34,11 @@ public class PinRegisterActivity extends AppCompatActivity {
 
         setListener();
 
-        setReactiveKeyboard();
+        softKeyboard = SoftKeyboard.setReactiveKeyboard(this,
+                binding.pinLayout,
+                binding.pinImgLayout,
+                binding.pinTextLayout);
+        //setReactiveKeyboard();
     }
 
 
@@ -59,36 +63,6 @@ public class PinRegisterActivity extends AppCompatActivity {
     }
 
 
-    private void setReactiveKeyboard() {
-        //키보드 반응형 레이아웃 설정
-        InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
-        softKeyboard = new SoftKeyboard(binding.pinLayout,im);
-        SoftKeyboard.SoftKeyboardChanged softKeyboardChanged = new SoftKeyboard.SoftKeyboardChanged() {
-            ViewGroup.LayoutParams param1;
-            ViewGroup.LayoutParams param2;
-            @Override
-            public void onSoftKeyboardShow() {
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.setMargins(0,0,0,0);
-                    param1 = binding.pinImgLayout.getLayoutParams();
-                    param2 = binding.pinTextLayout.getLayoutParams();
-                    binding.pinImgLayout.setLayoutParams(params);
-                    binding.pinTextLayout.setLayoutParams(params);
-                });
-            }
-            @Override
-            public void onSoftKeyboardHide() {
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    binding.pinImgLayout.setLayoutParams(param1);
-                    binding.pinTextLayout.setLayoutParams(param2);
-                });
-            }
-        };
-
-        softKeyboard.setSoftKeyboardCallback(softKeyboardChanged);//setSoftKeyboardCallback
-    }
-
 
     //입력값 검증,Pin값 저장 후 MainActivity로 이동
     private void moveToMain() {
@@ -109,5 +83,7 @@ public class PinRegisterActivity extends AppCompatActivity {
         super.onDestroy();
         softKeyboard.unRegisterSoftKeyboardCallback();
     }
+
+
 
 }

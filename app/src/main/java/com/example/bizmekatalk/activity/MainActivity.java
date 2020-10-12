@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private List<ProfileItem> allItems = new Vector<ProfileItem>();
     private ProfileListAdapter adapter;
     private boolean lastitemVisibleFlag = false;
-    private int currentItemCount=0;
+    private int currentItemCount = 0;
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -59,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     private void configureBottomNavigation() {
         setBottomNavigationViewListener(configureBottomNavigationLayout());
     }
@@ -76,21 +74,22 @@ public class MainActivity extends AppCompatActivity {
     private void setBottomNavigationViewListener(BottomNavigationView bottomNavigationView) {
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             FragmentTransaction trans = fragmentManager.beginTransaction();
-            switch (menuItem.getItemId()){
-                case R.id.navigation_group:{
-                    trans.replace(R.id.frame_layout,groupFragment).commitAllowingStateLoss();
+            switch (menuItem.getItemId()) {
+                case R.id.navigation_group: {
+                    trans.replace(R.id.frame_layout, groupFragment).commitAllowingStateLoss();
                     break;
                 }
-                case R.id.navigation_chat:{
-                    trans.replace(R.id.frame_layout,chatFragment).commitAllowingStateLoss();
+                case R.id.navigation_chat: {
+                    trans.replace(R.id.frame_layout, chatFragment).commitAllowingStateLoss();
                     break;
                 }
-                case R.id.navigation_organ:{
+                case R.id.navigation_organ: {
+                    Log.i("MainActivity.jay","organ");
                     trans.replace(R.id.frame_layout, organFragment).commitAllowingStateLoss();
                     break;
                 }
-                case R.id.navigation_setting:{
-                    trans.replace(R.id.frame_layout,settingFragment).commitAllowingStateLoss();
+                case R.id.navigation_setting: {
+                    trans.replace(R.id.frame_layout, settingFragment).commitAllowingStateLoss();
                     break;
                 }
             }
@@ -99,12 +98,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    private RequestParams setParams(){
+    private RequestParams setParams() {
         //GetAllUserInfo에 요청하기 위한 Url, RequestHeader 및 RequestBody 설정
-        ApiPath apiPath = new ApiPath("OrgUserInfo","GetAllUserInfo");
+        ApiPath apiPath = new ApiPath("OrgUserInfo", "GetAllUserInfo");
 
-        Map<String,String> headerMap = new HashMap<String,String>();
+        Map<String, String> headerMap = new HashMap<String, String>();
         JSONObject keyJson = new JSONObject();
 
         JSONObject bodyJson = new JSONObject();
@@ -112,67 +110,67 @@ public class MainActivity extends AppCompatActivity {
         int method = PreferenceManager.getHttpMethodPost();
 
         try {
-            keyJson.put("userid",PreferenceManager.getString(PreferenceManager.getUserId()));
-            keyJson.put("compid",PreferenceManager.getString(PreferenceManager.getCompId()));
-            keyJson.put("ltoken",PreferenceManager.getString(PreferenceManager.getlToken()));
-            bodyJson.put("compid",PreferenceManager.getString(PreferenceManager.getCompId()));
-            bodyJson.put("lan",1);
+            keyJson.put("userid", PreferenceManager.getString(PreferenceManager.getUserId()));
+            keyJson.put("compid", PreferenceManager.getString(PreferenceManager.getCompId()));
+            keyJson.put("ltoken", PreferenceManager.getString(PreferenceManager.getlToken()));
+            bodyJson.put("compid", PreferenceManager.getString(PreferenceManager.getCompId()));
+            bodyJson.put("lan", 1);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        headerMap.put("Content-Type","application/json;odata.metadata=full");
-        headerMap.put("Expect","100-continue");
-        headerMap.put("key",keyJson.toString());
+        headerMap.put("Content-Type", "application/json;odata.metadata=full");
+        headerMap.put("Expect", "100-continue");
+        headerMap.put("key", keyJson.toString());
 
-        return new RequestParams(apiPath,headerMap,bodyJson,method);
+        return new RequestParams(apiPath, headerMap, bodyJson, method);
     }
 
 
-    private void scrolledDataUpdate(){
-            profile_list.setOnScrollListener(new ListView.OnScrollListener(){
-                @Override
-                public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-                    if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastitemVisibleFlag) {
-                        Log.i(PreferenceManager.TAG,"스크롤의 끝 "+currentItemCount);
-                        int i =0;
-                        while((adapter.getCount() < allItems.size()) && (i < PreferenceManager.getProfileListStep())){
-                            adapter.updateItems(allItems.get(currentItemCount));
-                            currentItemCount++;
-                            i++;
-                        }
-                        adapter.notifyDataSetChanged();
-                        //데이터 로드
+    private void scrolledDataUpdate() {
+        profile_list.setOnScrollListener(new ListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastitemVisibleFlag) {
+                    Log.i(PreferenceManager.TAG, "스크롤의 끝 " + currentItemCount);
+                    int i = 0;
+                    while ((adapter.getCount() < allItems.size()) && (i < PreferenceManager.getProfileListStep())) {
+                        adapter.updateItems(allItems.get(currentItemCount));
+                        currentItemCount++;
+                        i++;
                     }
+                    adapter.notifyDataSetChanged();
+                    //데이터 로드
                 }
+            }
 
-                @Override
-                public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    //Flag 변경
-                    lastitemVisibleFlag = (totalItemCount > 0) && ((firstVisibleItem + visibleItemCount) >= totalItemCount);
-                }
-            });
-            profile_list.setAdapter(adapter);
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                //Flag 변경
+                lastitemVisibleFlag = (totalItemCount > 0) && ((firstVisibleItem + visibleItemCount) >= totalItemCount);
+            }
+        });
+        profile_list.setAdapter(adapter);
     }
 
 
     //GetAllUserInfo 요청
-    private void getAllItems(RequestParams params){
+    private void getAllItems(RequestParams params) {
         //request 설정
         RequestAPI requestAPI = new RequestAPI();
-        requestAPI.<String>getCall(params).ifPresent(call->{
-            new WebApiController<String>().request(call,(result)->{
-                if(result.isSuccess()){
+        requestAPI.<String>getCall(params).ifPresent(call -> {
+            new WebApiController<String>().request(call, (result) -> {
+                if (result.isSuccess()) {
                     try {
                         JSONArray jsonArr = new JSONArray(result.getData());
                         String tempStr = null;
-                        for(int i=0;i<jsonArr.length();i++){
+                        for (int i = 0; i < jsonArr.length(); i++) {
                             ProfileItem item = new ProfileItem();
                             String profileImage = jsonArr.getJSONObject(i).getString("profileimage");
                             String profileImgUrl = PreferenceManager.getUploadUrl() + profileImage;
                             item.setProfileImageUrl(profileImgUrl);
                             item.setName(jsonArr.getJSONObject(i).getString("name"));
                             tempStr = jsonArr.getJSONObject(i).getString("position");
-                            tempStr = ("".equals(tempStr.trim())) ? tempStr : ("("+tempStr+")");
+                            tempStr = ("".equals(tempStr.trim())) ? tempStr : ("(" + tempStr + ")");
                             item.setPosition(tempStr);
                             item.setJob(jsonArr.getJSONObject(i).getString("job"));
                             allItems.add(item);
@@ -182,17 +180,17 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     //ListView 첫 화면에 표시할 정보 Adapter에 전달
-                    int i=0;
-                    while((adapter.getCount() < allItems.size()) &&(i < PreferenceManager.getProfileListStep())){
+                    int i = 0;
+                    while ((adapter.getCount() < allItems.size()) && (i < PreferenceManager.getProfileListStep())) {
                         adapter.updateItems(allItems.get(i));
                         i++;
                     }
                     //현재까지 전달한 아이템 카운트
-                    currentItemCount=i;
+                    currentItemCount = i;
 
                     adapter.notifyDataSetChanged();
                 } else {
-                    Log.i(PreferenceManager.TAG,"프로필 업데이트 실패. request : "+result.getError());
+                    Log.i(PreferenceManager.TAG, "프로필 업데이트 실패. request : " + result.getError());
                 }
             });
         });

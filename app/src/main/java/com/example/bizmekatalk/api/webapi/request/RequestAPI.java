@@ -1,5 +1,7 @@
 package com.example.bizmekatalk.api.webapi.request;
 
+import android.util.Log;
+
 import com.example.bizmekatalk.api.common.ApiPath;
 import com.example.bizmekatalk.api.common.RequestParams;
 import com.example.bizmekatalk.api.webapi.common.HttpServiceAPI;
@@ -57,10 +59,11 @@ public class RequestAPI {
 
     private <T>Call<T> getCall(HttpServiceAPI httpService) {
         Iterator<String> iterator = path.getPathList().iterator();
+        Log.i("jay.RequestAPI","Request Body : "+body);
         switch ( iterator.next() ){
-            case "Authentication" : return (Call<T>)httpService.authenticationAPI( iterator.next(), body.toString() );
-            case "OrgUserInfo" : return (Call<T>) httpService.orgUserInfoAPI( iterator.next(), headerMap, body.toString() );
-            case "OrgDeptInfo" : return (Call<T>) httpService.orgDeptInfoAPI( iterator.next(), headerMap, body.toString() );
+            case "Authentication" : return (Call<T>)httpService.authenticationAPI( iterator.next(), body );
+            case "OrgUserInfo" : return (Call<T>) httpService.orgUserInfoAPI( iterator.next(), headerMap, body );
+            case "OrgDeptInfo" : return (Call<T>) httpService.orgDeptInfoAPI( iterator.next(), headerMap, body );
             default: throw new RuntimeException( "No Such request type.");
         }
     }

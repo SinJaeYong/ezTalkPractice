@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bizmekatalk.R;
+import com.example.bizmekatalk.crypto.AES256Cipher;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
 public class Splash extends AppCompatActivity {
@@ -23,6 +24,10 @@ public class Splash extends AppCompatActivity {
         setContentView(R.layout.splash);
         getSupportActionBar().hide();
 
+        AES256Cipher.initKey();
+
+
+        //Log.i("jay.Splash","decrypt encryption : " + AES256Cipher.stringToDecryptionString(encryption));
         Handler handler = getHandler();
 
         if(handler != null){
