@@ -14,43 +14,62 @@ import com.example.bizmekatalk.api.common.RequestParamBuilder;
 import com.example.bizmekatalk.api.common.RequestParams;
 import com.example.bizmekatalk.crypto.AES256Cipher;
 import com.example.bizmekatalk.items.DeptItem;
+import com.example.bizmekatalk.items.Item;
+import com.example.bizmekatalk.items.UserItem;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import lombok.Getter;
-import lombok.Setter;
+public class DeptListAdapter extends CustomAdapter {
 
-public class DeptListAdapter extends CustomAdapter<DeptItem> {
 
-    @Getter
-    @Setter
-    private Map<String,List<JSONObject>> map = new HashMap<String,List<JSONObject>>();
-
-    public LinkedList<String> navi = new LinkedList<String>();
 
     @Override
     public void addItems(String result) {
-
         // 이 아래 전부 Fragment
-
     }
 
     @Override
-    public void updateItems(List<JSONObject> items) {
-        List<DeptItem> deptItems = convertToItemList(items);
-        this.items = deptItems;
+    public void updateItems(List<JSONObject> jsonItems) {
+        if("userid".equals(jsonItems.get(0).keys().next())){
+            this.items = convertJsonToUserItem(jsonItems);
+        } else {
+            this.items = convertJsonToDeptItem(jsonItems);
+        }
+
     }
 
-    private List<DeptItem> convertToItemList(List<JSONObject> items) {
-        return items.stream().map(jsonObject -> {
+
+
+
+    @Override
+    public void initNavi(String init) {
+        navi.clear();
+        navi.push(init);
+    }
+
+    private List<Item> convertJsonToUserItem(List<JSONObject> jsonItems) {
+        return jsonItems.stream().map(jsonObject -> {
+            UserItem item = new UserItem();
+            try {
+
+                item.setName(jsonObject.get("name").toString());
+                item.setDeptName(jsonObject.get("deptname").toString());
+                item.setPosition(jsonObject.get("position").toString());
+                item.setProfileImageUrl(jsonObject.get("profileimage").toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return item;
+        }).collect(Collectors.toList());
+    }
+
+    private List<Item> convertJsonToDeptItem(List<JSONObject> jsonItems) {
+        return jsonItems.stream().map(jsonObject -> {
                 DeptItem item = new DeptItem();
                 try {
                     item.setDeptId(jsonObject.get("deptid").toString());
@@ -63,10 +82,7 @@ public class DeptListAdapter extends CustomAdapter<DeptItem> {
             }).collect(Collectors.toList());
     }
 
-    public void initNavi(String init){
-        navi.clear();
-        navi.push(init);
-    }
+
 
     @Override
     public int getCount() {
@@ -99,7 +115,6 @@ public class DeptListAdapter extends CustomAdapter<DeptItem> {
 
         if(DeptItem.class.isInstance(items.get(position))){
             DeptHolder deptHolder = new DeptHolder();
-            Log.i("jay.DeptListAdapter","들어왔다");
             if (itemView == null) {
                 LayoutInflater inflater = (LayoutInflater) viewGroup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 itemView = inflater.inflate(R.layout.dept_item, viewGroup, false);
@@ -111,16 +126,16 @@ public class DeptListAdapter extends CustomAdapter<DeptItem> {
             }
 
             if (deptHolder.tvDeptName != null) {
-                deptHolder.tvDeptName.setText(items.get(position).getDeptName());
+                deptHolder.tvDeptName.setText(((DeptItem)items.get(position)).getDeptName());
             }
 
             if (deptHolder.ivIsLeaf != null) {
-                if ("Y".equals(items.get(position).getIsLeaf())){
+                if ("Y".equals(((DeptItem)items.get(position)).getIsLeaf())){
                     deptHolder.ivIsLeaf.setVisibility(View.VISIBLE);
                     itemView.setOnClickListener(v -> {
-                        navi.add(items.get(position).getDeptId());
+                        navi.add(((DeptItem)items.get(position)).getDeptId());
                         Log.i("jay.navi","navi.gitList : "+navi.getLast());
-                        updateItems(map.get(items.get(position).getDeptId()));
+                        updateItems(groupedMap.get(((DeptItem)items.get(position)).getDeptId()));
                         notifyDataSetChanged();
                     });
                 } else{

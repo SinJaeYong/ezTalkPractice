@@ -5,10 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProfileItem {
+public class UserItem implements Item{
     private String profileImageUrl;
     private String name;
     private String position;
-    private String job;
+    private String deptName;
 
 }

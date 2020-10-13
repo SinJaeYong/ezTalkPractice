@@ -21,8 +21,8 @@ import com.example.bizmekatalk.api.common.RequestParams;
 import com.example.bizmekatalk.api.webapi.common.WebApiController;
 import com.example.bizmekatalk.api.webapi.request.RequestAPI;
 import com.example.bizmekatalk.databinding.OrganFragmentBinding;
-import com.example.bizmekatalk.items.DeptItem;
 import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.utils.enums.ArrangeType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,25 +36,26 @@ import java.util.stream.Collectors;
 import retrofit2.Call;
 
 public class OrganFragment extends Fragment {
-    private OrganFragmentBinding binding;
     private DeptListAdapter adapter = new DeptListAdapter();
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater,R.layout.organ_fragment,container,false);
+        OrganFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.organ_fragment, container, false);
         binding.setOrganFragment(this);
 
         //cyperCheck();
         //adapter.updateAdapter(setRequestParams(""),"add");
-        callAPI(setDeptRequestParams(),adapter);
+        //callAPI(setUserRequestParams(),adapter);
+        updateAdapterWithAPIResult(setDeptRequestParams(), adapter, ArrangeType.GROUP_BY,"parentdeptid");
+
 
         binding.btnDeptBack.setOnClickListener(v -> {
             if(adapter.navi.size() > 1)
                 adapter.navi.removeLast();
             Log.i("jay.navi","navi.gitList : "+adapter.navi.getLast());
-            adapter.updateItems(adapter.getMap().get(adapter.navi.getLast()));
+            adapter.updateItems(adapter.getGroupedMap().get(adapter.navi.getLast()));
             adapter.notifyDataSetChanged();
             //adapter.updateAdapter(setRequestParams(adapter.preDeptId),"reset");
         });
@@ -64,17 +65,18 @@ public class OrganFragment extends Fragment {
     }
 
 
-    private void callAPI(@javax.annotation.Nullable RequestParams params, CustomAdapter adapter) {
+    private void updateAdapterWithAPIResult(RequestParams params, CustomAdapter adapter,ArrangeType type, String arrange) {
         new RequestAPI().<String>getCall(params).ifPresent(call->{
-            setRequestCallBack(call, adapter);
+            setRequestCallBack(call, adapter, type, arrange);
         });
     }
 
 
-    private static void setRequestCallBack(Call<String> call, CustomAdapter adapter) {
+    private static void setRequestCallBack(Call<String> call, CustomAdapter adapter, ArrangeType type, String arrange) {
         new WebApiController<String>().request(call,(result)->{
             if(result.isSuccess()){
                 String resultData = result.getData();
+
                 Log.i("jay.OrganFragment","Result : "+resultData);
                 try {
                     JSONArray jsonArr = new JSONArray(resultData);
@@ -83,19 +85,11 @@ public class OrganFragment extends Fragment {
                         JSONObject json = new JSONObject(jsonArr.get(i).toString());
                         list.add(json);
                     }
-                    Map<String,List<JSONObject>> map = list.stream().collect(Collectors.groupingBy(json-> {
-                        try {
-                            return json.getString("parentdeptid");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            return "";
-                        }
-                    }));
-                    Log.i("jay.OrganFragment","list : "+map.get("").toString());
-                    ((DeptListAdapter)adapter).setMap(map);
-                    ((DeptListAdapter)adapter).initNavi("");
-                    Log.i("jay.navi","navi.gitList : "+((DeptListAdapter)adapter).navi.getLast());
-                    adapter.updateItems(map.get(""));
+
+                    //List<String> path = call.request().url().pathSegments();
+                    adapter.initNavi("");
+                    selectArrangeType(adapter, type, arrange, list);
+                    adapter.updateItems(adapter.getGroupedMap().get(""));
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -104,6 +98,30 @@ public class OrganFragment extends Fragment {
                 Log.i("jay.OrganFragment","에러. response : "+result.getError());
             }
         });
+    }
+
+    private static void selectArrangeType(CustomAdapter adapter, ArrangeType type, String arrange, List<JSONObject> list) {
+        switch (type){
+            case GROUP_BY:
+                Map<String, List<JSONObject>> map = list.stream().collect(Collectors.groupingBy(json-> {
+                    try {
+                        return json.getString(arrange);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return "";
+                    }
+                }));
+                adapter.setGroupedMap(map);
+                break;
+            case SORT_WITH:
+
+                break;
+
+            case DEFAULT:
+
+                break;
+        }
+
     }
 
     private RequestParams setDeptRequestParams() {

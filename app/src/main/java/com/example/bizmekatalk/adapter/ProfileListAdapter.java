@@ -23,7 +23,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.holder.ProfileViewHolder;
-import com.example.bizmekatalk.items.ProfileItem;
+import com.example.bizmekatalk.items.UserItem;
 import com.example.bizmekatalk.utils.PreferenceManager;
 
 import java.util.ArrayList;
@@ -33,14 +33,14 @@ public class ProfileListAdapter extends BaseAdapter {
 
     private Context context;
 
-    private List<ProfileItem> items = new ArrayList<ProfileItem>();
+    private List<UserItem> items = new ArrayList<UserItem>();
 
 
     public ProfileListAdapter(Context context) {
         this.context = context;
     }
 
-    public void updateItems(ProfileItem item){
+    public void updateItems(UserItem item){
         this.items.add(item);
     }
 
@@ -121,7 +121,7 @@ public class ProfileListAdapter extends BaseAdapter {
 
         if( holder.itemName != null ) holder.itemName.setText(items.get(position).getName());
         if( holder.itemPosition != null ) holder.itemPosition.setText(items.get(position).getPosition());
-        if( holder.itemJob != null ) holder.itemJob.setText(items.get(position).getJob());
+        if( holder.itemJob != null ) holder.itemJob.setText(items.get(position).getDeptName());
     }
 
 

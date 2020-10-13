@@ -18,7 +18,7 @@ import com.example.bizmekatalk.fragment.ChatFragment;
 import com.example.bizmekatalk.fragment.GroupFragment;
 import com.example.bizmekatalk.fragment.OrganFragment;
 import com.example.bizmekatalk.fragment.SettingFragment;
-import com.example.bizmekatalk.items.ProfileItem;
+import com.example.bizmekatalk.items.UserItem;
 import com.example.bizmekatalk.api.common.RequestParams;
 import com.example.bizmekatalk.utils.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -35,7 +35,7 @@ import java.util.Vector;
 public class MainActivity extends AppCompatActivity {
 
     private ListView profile_list;
-    private List<ProfileItem> allItems = new Vector<ProfileItem>();
+    private List<UserItem> allItems = new Vector<UserItem>();
     private ProfileListAdapter adapter;
     private boolean lastitemVisibleFlag = false;
     private int currentItemCount = 0;
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                         JSONArray jsonArr = new JSONArray(result.getData());
                         String tempStr = null;
                         for (int i = 0; i < jsonArr.length(); i++) {
-                            ProfileItem item = new ProfileItem();
+                            UserItem item = new UserItem();
                             String profileImage = jsonArr.getJSONObject(i).getString("profileimage");
                             String profileImgUrl = PreferenceManager.getUploadUrl() + profileImage;
                             item.setProfileImageUrl(profileImgUrl);
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                             tempStr = jsonArr.getJSONObject(i).getString("position");
                             tempStr = ("".equals(tempStr.trim())) ? tempStr : ("(" + tempStr + ")");
                             item.setPosition(tempStr);
-                            item.setJob(jsonArr.getJSONObject(i).getString("job"));
+                            item.setDeptName(jsonArr.getJSONObject(i).getString("job"));
                             allItems.add(item);
                         }
                     } catch (JSONException e) {

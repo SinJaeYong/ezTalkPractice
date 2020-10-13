@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserInfo {
+public class UserInfoItem {
     @SerializedName("userid")
     private String userid;
     @SerializedName("compid")
