@@ -23,7 +23,8 @@
         <LinearLayout
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_height="0dp"
+            android:visibility="gone">
             <TextView
                 android:id="@+id/tvDeptName"
                 android:gravity="left|center_vertical"
@@ -35,6 +36,31 @@
                 android:text="DEPATMENT"
                 android:textStyle="bold"
                  />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:text="DEPATMENT"
+                android:textStyle="bold"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:text="DEPATMENT"
+                android:textStyle="bold"
+                />
 
         </LinearLayout>
 

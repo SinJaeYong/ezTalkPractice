@@ -17,7 +17,6 @@ public interface HttpServiceAPI {
     @POST("Authentication/{path}")
     Call<String> authenticationAPI(@Path("path") String path, @Body String jsonStr);
 
-
     @POST("OrgDeptInfo/{path}")
     Call<String> orgDeptInfoAPI(@Path("path") String path, @HeaderMap Map<String,String> headers, @Body String jsonStr);
 

@@ -10,6 +10,7 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.example.bizmekatalk.api.common.ApiPath;
+import com.example.bizmekatalk.api.common.RequestParamBuilder;
 import com.example.bizmekatalk.api.webapi.common.WebApiController;
 import com.example.bizmekatalk.api.webapi.request.RequestAPI;
 import com.example.bizmekatalk.R;
@@ -18,6 +19,9 @@ import com.example.bizmekatalk.fragment.ChatFragment;
 import com.example.bizmekatalk.fragment.GroupFragment;
 import com.example.bizmekatalk.fragment.OrganFragment;
 import com.example.bizmekatalk.fragment.SettingFragment;
+import com.example.bizmekatalk.items.DataRepository;
+import com.example.bizmekatalk.items.DeptItem;
+import com.example.bizmekatalk.items.Item;
 import com.example.bizmekatalk.items.UserItem;
 import com.example.bizmekatalk.api.common.RequestParams;
 import com.example.bizmekatalk.utils.PreferenceManager;
@@ -27,10 +31,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,11 +57,92 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.i("jay.DataRepository","beforeCallBack");
+        deptCallBack(getDeptRequestParams());
+        userCallBack(getUserRequestParams());
+
         setContentView(R.layout.main_activity);
 
         getSupportActionBar().hide();
 
+        Log.i("jay.DataRepository","beforeBotNavi");
         configureBottomNavigation();
+    }
+
+
+
+    private void deptCallBack(RequestParams params) {
+        new RequestAPI().<String>getCall(params).ifPresent(call->{
+            Log.i("jay.DataRepository","before enqueue");
+            new WebApiController<String>().request(call,(result)->{
+                Log.i("jay.DataRepository","enqueue");
+                List<Item> itemList = new ArrayList<>();
+                if(result.isSuccess()){
+                    String resultData = result.getData();
+
+                    Log.i("jay.MainActivity","deptResult : "+resultData);
+                    try {
+                        JSONArray jsonArr = new JSONArray(resultData);
+                        for(int i = 0 ; i < jsonArr.length() ; i++){
+                            JSONObject json = new JSONObject(jsonArr.get(i).toString());
+                            itemList.add(new DeptItem(json));
+                        }
+                        //List -> Map(key = parentid).
+                        Map<String,List<Item>> deptMap = itemList.stream().collect(Collectors.groupingBy(item-> ((DeptItem)item).getParentDeptId()));
+                        DataRepository.getInstance().setDeptMap(deptMap);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    Log.i("jay.MainActivity","에러. response : "+result.getError());
+                }
+            });
+        });
+    }
+
+    private RequestParams getDeptRequestParams() {
+        return new RequestParamBuilder().
+                setPath(new ApiPath("OrgDeptInfo","GetAllDeptInfo")).
+                setBodyJson("compid", PreferenceManager.getString(PreferenceManager.getCompId())).
+                setBodyJson("lan",1).
+                build();
+    }
+
+
+    private void userCallBack(RequestParams params) {
+        new RequestAPI().<String>getCall(params).ifPresent(call->{
+            new WebApiController<String>().request(call,(result)->{
+                if(result.isSuccess()){
+
+                    String resultData = result.getData();
+                    Log.i("jay.MainActivity","Result : "+resultData);
+                    try {
+                        JSONArray jsonArr = new JSONArray(resultData);
+                        List<Item> userList = new ArrayList<>();
+                        for(int i = 0 ; i < jsonArr.length() ; i++){
+                            JSONObject json = new JSONObject(jsonArr.get(i).toString());
+                            userList.add(new UserItem(json));
+                            Log.i("jay.MainActivity",String.format("user( %d ) : %s",i+1,userList.get(i).toString()));
+                        }
+                        DataRepository.getInstance().setUserList(userList);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.i("jay.MainActivity","에러. response : "+result.getError());
+                }
+            });
+        });
+    }
+
+    private RequestParams getUserRequestParams() {
+        return new RequestParamBuilder().
+                setPath(new ApiPath("OrgUserInfo","GetAllUserInfo")).
+                setBodyJson("compid", PreferenceManager.getString(PreferenceManager.getCompId())).
+                setBodyJson("lan",1).
+                build();
     }
 
 
@@ -167,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                             UserItem item = new UserItem();
                             String profileImage = jsonArr.getJSONObject(i).getString("profileimage");
                             String profileImgUrl = PreferenceManager.getUploadUrl() + profileImage;
-                            item.setProfileImageUrl(profileImgUrl);
+                            item.setProfileImage(profileImgUrl);
                             item.setName(jsonArr.getJSONObject(i).getString("name"));
                             tempStr = jsonArr.getJSONObject(i).getString("position");
                             tempStr = ("".equals(tempStr.trim())) ? tempStr : ("(" + tempStr + ")");

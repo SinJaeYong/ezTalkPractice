@@ -90,7 +90,7 @@ public class ProfileListAdapter extends BaseAdapter {
 
     private void setHolder(ProfileViewHolder holder, int position){
 
-        String imgUrl = items.get(position).getProfileImageUrl();
+        String imgUrl = items.get(position).getProfileImage();
         if(holder.itemProfileImage!=null){
             GradientDrawable drawable=(GradientDrawable)context.getDrawable(R.drawable.profile_background_rounding);
             holder.itemProfileImage.setBackground(drawable);

@@ -113,7 +113,7 @@ public class PinLoginActivity extends AppCompatActivity {
 
         if(pinPassList.size() == maxCount) {
             pinLock = true;
-            new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200); // 0.5초후
+            new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200);
         }
 
 
