@@ -1,9 +1,7 @@
 package com.example.bizmekatalk.api.webapi.common;
 
-import android.text.TextUtils;
-
 import com.example.bizmekatalk.api.common.ServerInfo;
-import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.common.PreferenceManager;
 
 
 import java.util.ArrayList;

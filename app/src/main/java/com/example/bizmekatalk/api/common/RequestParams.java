@@ -1,7 +1,5 @@
 package com.example.bizmekatalk.api.common;
 
-import com.example.bizmekatalk.api.common.ApiPath;
-
 import org.json.JSONObject;
 
 import java.util.Map;

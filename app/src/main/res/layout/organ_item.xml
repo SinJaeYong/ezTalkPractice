@@ -6,6 +6,7 @@
     android:padding="15dp"
     >
     <ImageView
+        android:id="@+id/ivProfileImage"
         android:scaleType="fitXY"
         android:layout_weight="1"
         android:layout_width="0dp"
@@ -21,6 +22,7 @@
         >
 
         <LinearLayout
+            android:id="@+id/llDeptItem"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -36,30 +38,33 @@
                 android:text="DEPATMENT"
                 android:textStyle="bold"
                  />
-
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/llUserItem"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:visibility="visible"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/tvUserName"
+                android:gravity="center|left"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
-                android:text="DEPATMENT"
+                android:text="userName"
                 android:textStyle="bold"
                 />
             <TextView
+                android:id="@+id/tvUserDeptName"
+                android:gravity="center|left"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:textColor="@android:color/black"
-                android:textSize="20sp"
-                android:text="DEPATMENT"
-                android:textStyle="bold"
+                android:textSize="15sp"
+                android:text="deptName"
                 />
 
         </LinearLayout>

@@ -4,25 +4,40 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.example.bizmekatalk.R;
+import com.example.bizmekatalk.api.common.RequestParamBuilder;
+import com.example.bizmekatalk.api.common.RequestParams;
+import com.example.bizmekatalk.api.webapi.common.WebApiController;
+import com.example.bizmekatalk.api.webapi.request.RequestAPI;
 import com.example.bizmekatalk.databinding.PinLoginActivityBinding;
-import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.items.DeptItem;
+import com.example.bizmekatalk.items.UserItem;
+import com.example.bizmekatalk.common.PreferenceManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
 public class PinLoginActivity extends AppCompatActivity {
+
+    private final int MSG_USER_FLAG = 0 ;
+    private final int MSG_DEPT_FLAG = 1 ;
 
     private boolean pinLock=false;
 
@@ -31,6 +46,9 @@ public class PinLoginActivity extends AppCompatActivity {
     private List<TextView> pinBtns = new Vector<TextView>();
     private LinkedList<Integer> pinPassList = new LinkedList<Integer>();
     private PinLoginActivityBinding binding;
+
+    private Handler mHandler;
+
 
 
     @Override
@@ -44,7 +62,6 @@ public class PinLoginActivity extends AppCompatActivity {
         setPinButtons();
 
         setListener();
-
     }//onCreate
 
 
@@ -113,7 +130,33 @@ public class PinLoginActivity extends AppCompatActivity {
 
         if(pinPassList.size() == maxCount) {
             pinLock = true;
-            new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200);
+            //new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200);
+            mHandler = new Handler(Looper.myLooper()){
+                boolean userFlag = false;
+                boolean deptFlag = false;
+                @Override
+                public void handleMessage(@NonNull Message msg) {
+                    Log.i("jay.PinLoginActivity","handleMessage");
+                    Log.i("jay.PinLoginActivity","msg.what : "+msg.what);
+                    switch (msg.what){
+                        case MSG_USER_FLAG:
+                            userFlag = true;
+                            Log.i("jay.PinLoginActivity","userFlag");
+                            break;
+                        case MSG_DEPT_FLAG:
+                            deptFlag = true;
+                            break;
+                        default:
+                            break;
+                    }
+                    if(userFlag&&deptFlag){
+                        Log.i("jay.PinLoginActivity","okFLag");
+                        moveToMain();
+                    }
+                }
+            };
+            setAllUserInfo(new RequestParamBuilder().getAllUserInfoParam().build());
+            setAllDeptInfo(new RequestParamBuilder().getAllDeptInfoParam().build());
         }
 
 
@@ -152,4 +195,52 @@ public class PinLoginActivity extends AppCompatActivity {
 
         pinPassList.clear();
     }//validatePins()
+
+
+    private void setAllDeptInfo(RequestParams params) {
+        new RequestAPI().<String>getCall(params).ifPresent(call->{
+            new WebApiController<String>().request(call,(result)->{
+                Log.i("jay.PinLoginActivity","setAllDeptInfo");
+                if(result.isSuccess()){
+                    try {
+                        JSONArray jsonArr = new JSONArray(result.getData());
+                        for(int i = 0 ; i < jsonArr.length() ; i++){
+                            JSONObject json = new JSONObject(jsonArr.get(i).toString());
+                            BizmekaApp.deptList.add(new DeptItem(json));
+                        }
+                        Message message = mHandler.obtainMessage(MSG_DEPT_FLAG);
+                        mHandler.sendMessage(message);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.i("jay.PinLoginActivity","에러. response : "+result.getError());
+                }
+            });
+        });
+    }
+
+
+    private void setAllUserInfo(RequestParams params) {
+        new RequestAPI().<String>getCall(params).ifPresent(call->{
+            new WebApiController<String>().request(call,(result)->{
+                Log.i("jay.PinLoginActivity","setAllUserInfo");
+                if(result.isSuccess()){
+                    try {
+                        JSONArray jsonArr = new JSONArray(result.getData());
+                        for(int i = 0 ; i < jsonArr.length() ; i++){
+                            JSONObject json = new JSONObject(jsonArr.get(i).toString());
+                            BizmekaApp.userList.add(new UserItem(json));
+                        }
+                        Message message = mHandler.obtainMessage(MSG_USER_FLAG);
+                        mHandler.sendMessage(message);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.i("jay.PinLoginActivity","에러. response : "+result.getError());
+                }
+            });
+        });
+    }
 }

@@ -1,13 +1,9 @@
-package com.example.bizmekatalk.utils;
+package com.example.bizmekatalk.common;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.bizmekatalk.activity.BizmekaApp;
-import com.example.bizmekatalk.utils.enums.RequestMethod;
-
-import lombok.Getter;
 
 public class PreferenceManager {
 

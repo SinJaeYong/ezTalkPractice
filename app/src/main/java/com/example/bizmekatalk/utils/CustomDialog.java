@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 
 import com.example.bizmekatalk.R;
-import com.example.bizmekatalk.utils.enums.RequestMethod;
+import com.example.bizmekatalk.common.PreferenceManager;
 
 /**
  * Created by Administrator on 2017-08-07.

@@ -1,8 +1,6 @@
 package com.example.bizmekatalk.api.common;
 
-import android.content.Context;
-
-import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.common.PreferenceManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,6 +86,20 @@ public class RequestParamBuilder {
     public RequestParamBuilder setMethod(int method){
         this.method = method;
         return  this;
+    }
+
+    public RequestParamBuilder getAllDeptInfoParam(){
+        setPath(new ApiPath("OrgDeptInfo","GetAllDeptInfo"));
+        setBodyJson("compid", PreferenceManager.getString(PreferenceManager.getCompId()));
+        setBodyJson("lan",1);
+        return this;
+    }
+
+    public RequestParamBuilder getAllUserInfoParam(){
+        setPath(new ApiPath("OrgUserInfo","GetAllUserInfo"));
+        setBodyJson("compid", PreferenceManager.getString(PreferenceManager.getCompId()));
+        setBodyJson("lan",1);
+        return this;
     }
 
 

@@ -1,30 +1,42 @@
 package com.example.bizmekatalk.activity;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 
-import android.widget.LinearLayout;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.bizmekatalk.api.common.RequestParams;
+import com.example.bizmekatalk.api.webapi.common.WebApiController;
+import com.example.bizmekatalk.api.webapi.request.RequestAPI;
 import com.example.bizmekatalk.databinding.PinRegisterActivityBinding;
+import com.example.bizmekatalk.items.DeptItem;
+import com.example.bizmekatalk.items.UserItem;
 import com.example.bizmekatalk.utils.CustomDialog;
-import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.common.PreferenceManager;
 import com.example.bizmekatalk.utils.SoftKeyboard;
 import com.example.bizmekatalk.utils.Validation;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PinRegisterActivity extends AppCompatActivity {
 
     private SoftKeyboard softKeyboard;
     private PinRegisterActivityBinding binding;
-
+    private Handler mHandler = new Handler(Looper.myLooper()){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +51,10 @@ public class PinRegisterActivity extends AppCompatActivity {
                 binding.pinImgLayout,
                 binding.pinTextLayout);
         //setReactiveKeyboard();
+
+        new Handler(Looper.myLooper()){
+
+        };
     }
 
 
@@ -83,7 +99,6 @@ public class PinRegisterActivity extends AppCompatActivity {
         super.onDestroy();
         softKeyboard.unRegisterSoftKeyboardCallback();
     }
-
 
 
 }

@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.crypto.AES256Cipher;
-import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.common.PreferenceManager;
 
 public class Splash extends AppCompatActivity {
     @Override

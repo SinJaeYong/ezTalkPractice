@@ -5,7 +5,7 @@ import android.util.Log;
 import com.example.bizmekatalk.api.common.ApiPath;
 import com.example.bizmekatalk.api.common.RequestParams;
 import com.example.bizmekatalk.api.webapi.common.HttpServiceAPI;
-import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.common.PreferenceManager;
 import com.example.bizmekatalk.api.common.ApiResult;
 
 import org.json.JSONObject;

@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UserItem implements Item{
+public class UserItem extends Item{
     private String userId;
     private String deptId;
     private String name;
@@ -36,4 +36,6 @@ public class UserItem implements Item{
         }
 
     }
+
+
 }

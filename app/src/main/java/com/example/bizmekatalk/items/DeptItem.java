@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class DeptItem implements Item{
+public class DeptItem extends Item{
     private String deptName;
     private String isLeaf;
     private String deptId;
@@ -30,4 +30,5 @@ public class DeptItem implements Item{
             e.printStackTrace();
         }
     }
+
 }

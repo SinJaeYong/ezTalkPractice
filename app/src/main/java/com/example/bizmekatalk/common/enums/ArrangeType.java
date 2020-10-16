@@ -1,4 +1,4 @@
-package com.example.bizmekatalk.utils.enums;
+package com.example.bizmekatalk.common.enums;
 
 public enum ArrangeType {
     GROUP_BY("GROUP_BY"),

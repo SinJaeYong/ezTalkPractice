@@ -14,15 +14,20 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
-import lombok.Setter;
 
 public class BizmekaApp extends Application {
 
     private static Context mContext;
 
 
-    //임시 저장소
+    public static String COMPID = "kaoni";
+    public static String COMPNAME = "";
 
+    public static LinkedList<String> navi = new LinkedList<>();
+    public static List<Item> deptList = new ArrayList<>();
+    public static List<Item> userList = new ArrayList<>();
+    public static Map<String, List<Item>> deptMap;
+    public static Map<String, List<Item>> userMap;
 
     public void onCreate(){
         super.onCreate();

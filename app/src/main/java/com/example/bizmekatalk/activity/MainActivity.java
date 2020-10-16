@@ -19,29 +19,27 @@ import com.example.bizmekatalk.fragment.ChatFragment;
 import com.example.bizmekatalk.fragment.GroupFragment;
 import com.example.bizmekatalk.fragment.OrganFragment;
 import com.example.bizmekatalk.fragment.SettingFragment;
-import com.example.bizmekatalk.items.DataRepository;
 import com.example.bizmekatalk.items.DeptItem;
 import com.example.bizmekatalk.items.Item;
 import com.example.bizmekatalk.items.UserItem;
 import com.example.bizmekatalk.api.common.RequestParams;
-import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.common.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private ListView profile_list;
-    private List<UserItem> allItems = new Vector<UserItem>();
+    private List<UserItem> allItems = new Vector<>();
     private ProfileListAdapter adapter;
     private boolean lastitemVisibleFlag = false;
     private int currentItemCount = 0;
@@ -57,9 +55,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        BizmekaApp.deptMap = deptListToMap(BizmekaApp.deptList);
+        BizmekaApp.userMap = userListToMap(BizmekaApp.userList);
+
         Log.i("jay.DataRepository","beforeCallBack");
-        deptCallBack(getDeptRequestParams());
-        userCallBack(getUserRequestParams());
+        //setAllDeptInfo(new RequestParamBuilder().getAllDeptInfoParam().build());
+        //setAllUserInfo(new RequestParamBuilder().getAllUserInfoParam().build());
 
         setContentView(R.layout.main_activity);
 
@@ -71,80 +72,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void deptCallBack(RequestParams params) {
-        new RequestAPI().<String>getCall(params).ifPresent(call->{
-            Log.i("jay.DataRepository","before enqueue");
-            new WebApiController<String>().request(call,(result)->{
-                Log.i("jay.DataRepository","enqueue");
-                List<Item> itemList = new ArrayList<>();
-                if(result.isSuccess()){
-                    String resultData = result.getData();
 
-                    Log.i("jay.MainActivity","deptResult : "+resultData);
-                    try {
-                        JSONArray jsonArr = new JSONArray(resultData);
-                        for(int i = 0 ; i < jsonArr.length() ; i++){
-                            JSONObject json = new JSONObject(jsonArr.get(i).toString());
-                            itemList.add(new DeptItem(json));
-                        }
-                        //List -> Map(key = parentid).
-                        Map<String,List<Item>> deptMap = itemList.stream().collect(Collectors.groupingBy(item-> ((DeptItem)item).getParentDeptId()));
-                        DataRepository.getInstance().setDeptMap(deptMap);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    Log.i("jay.MainActivity","에러. response : "+result.getError());
-                }
-            });
-        });
+    private Map<String, List<Item>> userListToMap (List<Item> itemList){
+        return itemList.stream().collect(Collectors.groupingBy(item -> ((UserItem)item).getDeptId()));
     }
-
-    private RequestParams getDeptRequestParams() {
-        return new RequestParamBuilder().
-                setPath(new ApiPath("OrgDeptInfo","GetAllDeptInfo")).
-                setBodyJson("compid", PreferenceManager.getString(PreferenceManager.getCompId())).
-                setBodyJson("lan",1).
-                build();
+    private Map<String, List<Item>> deptListToMap (List<Item> itemList){
+        return itemList.stream().collect(Collectors.groupingBy(item -> ((DeptItem)item).getParentDeptId()));
     }
-
-
-    private void userCallBack(RequestParams params) {
-        new RequestAPI().<String>getCall(params).ifPresent(call->{
-            new WebApiController<String>().request(call,(result)->{
-                if(result.isSuccess()){
-
-                    String resultData = result.getData();
-                    Log.i("jay.MainActivity","Result : "+resultData);
-                    try {
-                        JSONArray jsonArr = new JSONArray(resultData);
-                        List<Item> userList = new ArrayList<>();
-                        for(int i = 0 ; i < jsonArr.length() ; i++){
-                            JSONObject json = new JSONObject(jsonArr.get(i).toString());
-                            userList.add(new UserItem(json));
-                            Log.i("jay.MainActivity",String.format("user( %d ) : %s",i+1,userList.get(i).toString()));
-                        }
-                        DataRepository.getInstance().setUserList(userList);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Log.i("jay.MainActivity","에러. response : "+result.getError());
-                }
-            });
-        });
-    }
-
-    private RequestParams getUserRequestParams() {
-        return new RequestParamBuilder().
-                setPath(new ApiPath("OrgUserInfo","GetAllUserInfo")).
-                setBodyJson("compid", PreferenceManager.getString(PreferenceManager.getCompId())).
-                setBodyJson("lan",1).
-                build();
-    }
-
 
     private void configureBottomNavigation() {
         setBottomNavigationViewListener(configureBottomNavigationLayout());
@@ -184,33 +119,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    private RequestParams setParams() {
-        //GetAllUserInfo에 요청하기 위한 Url, RequestHeader 및 RequestBody 설정
-        ApiPath apiPath = new ApiPath("OrgUserInfo", "GetAllUserInfo");
-
-        Map<String, String> headerMap = new HashMap<String, String>();
-        JSONObject keyJson = new JSONObject();
-
-        JSONObject bodyJson = new JSONObject();
-
-        int method = PreferenceManager.getHttpMethodPost();
-
-        try {
-            keyJson.put("userid", PreferenceManager.getString(PreferenceManager.getUserId()));
-            keyJson.put("compid", PreferenceManager.getString(PreferenceManager.getCompId()));
-            keyJson.put("ltoken", PreferenceManager.getString(PreferenceManager.getlToken()));
-            bodyJson.put("compid", PreferenceManager.getString(PreferenceManager.getCompId()));
-            bodyJson.put("lan", 1);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        headerMap.put("Content-Type", "application/json;odata.metadata=full");
-        headerMap.put("Expect", "100-continue");
-        headerMap.put("key", keyJson.toString());
-
-        return new RequestParams(apiPath, headerMap, bodyJson, method);
-    }
 
 
     private void scrolledDataUpdate() {

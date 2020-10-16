@@ -24,7 +24,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.holder.ProfileViewHolder;
 import com.example.bizmekatalk.items.UserItem;
-import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.common.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;

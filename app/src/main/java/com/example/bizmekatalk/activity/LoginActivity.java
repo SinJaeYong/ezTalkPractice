@@ -1,15 +1,9 @@
 package com.example.bizmekatalk.activity;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +16,7 @@ import com.example.bizmekatalk.databinding.LoginActivityBinding;
 import com.example.bizmekatalk.api.common.RequestParams;
 import com.example.bizmekatalk.utils.CustomDialog;
 
-import com.example.bizmekatalk.utils.PreferenceManager;
+import com.example.bizmekatalk.common.PreferenceManager;
 import com.example.bizmekatalk.utils.SoftKeyboard;
 import com.example.bizmekatalk.utils.Validation;
 import org.json.JSONException;
