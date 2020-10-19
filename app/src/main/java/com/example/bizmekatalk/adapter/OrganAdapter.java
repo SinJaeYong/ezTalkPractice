@@ -1,7 +1,6 @@
 package com.example.bizmekatalk.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +13,27 @@ import com.example.bizmekatalk.activity.BizmekaApp;
 import com.example.bizmekatalk.items.DeptItem;
 import com.example.bizmekatalk.items.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrganAdapter extends CustomAdapter {
 
     @Override
     public void setData(List<Item> items) {
-        this.items = items;
-        notifyDataSetChanged();
+        if(items != null){
+            this.items = new ArrayList<>(items);
+        }
+    }
+
+    @Override
+    public void addData(List<Item> items) {
+        if(items != null){
+            this.items.addAll(items);
+        }
+    }
+    @Override
+    public void clear(){
+        this.items.clear();
     }
 
     @Override
@@ -43,10 +55,13 @@ public class OrganAdapter extends CustomAdapter {
     @Override
     public View getView(int position, View itemView, ViewGroup viewGroup) {
 
+
         Holder holder = new Holder();
         if (itemView == null) {
+
             LayoutInflater inflater = (LayoutInflater) viewGroup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             itemView = inflater.inflate(R.layout.organ_item, viewGroup, false);
+
             holder.llUserItem = itemView.findViewById(R.id.llUserItem);
             holder.tvUserName = itemView.findViewById(R.id.tvUserName);
             holder.tvUserDeptName= itemView.findViewById(R.id.tvUserDeptName);
@@ -61,31 +76,28 @@ public class OrganAdapter extends CustomAdapter {
 
         /// 여기서부터 분기처리
         //Log.i("jay.DeptListAdapter","typename : "+items.get(position).getType());
+        //Log.i("jay.OrganAdapter","items : "+(items.get(position)).toString());
         if("UserItem".equals(items.get(position).getType())){
+            holder.llDeptItem.setVisibility(View.GONE);
+            holder.llUserItem.setVisibility(View.VISIBLE);
 
         } else {
+            holder.llUserItem.setVisibility(View.GONE);
+            holder.llDeptItem.setVisibility(View.VISIBLE);
             if (holder.tvDeptName != null) {
                 holder.tvDeptName.setText(((DeptItem)items.get(position)).getDeptName());
             }
-
-            //OnclickListener
-            if (holder.ivIsLeaf != null) {
-                if ("Y".equals(((DeptItem)items.get(position)).getIsLeaf())){
-                    holder.ivIsLeaf.setVisibility(View.VISIBLE);
-                    itemView.setOnClickListener(v -> {
-                        String parentId = ((DeptItem) items.get(position)).getDeptId();
-                        BizmekaApp.navi.add(parentId);
-                        Log.i("jay.navi","navi.gitList : "+BizmekaApp.navi.getLast());
-                        setData(BizmekaApp.deptMap.get(parentId));
-                    });
-                } else{
-                    ///부서원 정보 출력
-                    holder.ivIsLeaf.setVisibility(View.INVISIBLE);
-                    itemView.setOnClickListener(v -> {
-
-                    });
+            //Dept에 OnClickListener
+            holder.llDeptItem.setOnClickListener(v -> {
+                String parentId = ((DeptItem) items.get(position)).getDeptId();
+                if( !BizmekaApp.navi.getLast().equals(parentId) ){
+                    BizmekaApp.navi.add(parentId);
                 }
-            }
+                clear();
+                addData(BizmekaApp.userMap.get(parentId));
+                addData(BizmekaApp.deptMap.get(parentId));
+                notifyDataSetChanged();
+            });
         }
 
         return itemView;

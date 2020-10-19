@@ -23,23 +23,26 @@ public class OrganFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.i("jay.DataRepository","MainThread");
         OrganFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.organ_fragment, container, false);
         binding.setOrganFragment(this);
         adapter = new OrganAdapter();
-
-        BizmekaApp.navi.push("s907000");
-
+        //Log.i("jay.OrganFragment", "deptMap : "+BizmekaApp.deptMap.toString());
+        BizmekaApp.navi.add("s907000");
+        Log.i("jay.OrganFragment","navi.userMap : "+BizmekaApp.userMap.toString());
         if (adapter != null ){
-
-            adapter.setData(  BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()) );
+            adapter.setData( BizmekaApp.userMap.get(BizmekaApp.navi.getLast()) );
+            adapter.addData( BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()) );
+            adapter.notifyDataSetChanged();
         }
 
         binding.btnDeptBack.setOnClickListener(v -> {
             if(BizmekaApp.navi.size() > 1)
                 BizmekaApp.navi.removeLast();
-            Log.i("jay.navi","navi.gitList : "+BizmekaApp.navi.getLast());
-            adapter.setData( BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()) );
+            Log.i("jay.OrganFragment","navi.getLast : "+BizmekaApp.navi.getLast());
+            adapter.clear();
+            adapter.addData( BizmekaApp.userMap.get(BizmekaApp.navi.getLast()) );
+            adapter.addData( BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()) );
+            adapter.notifyDataSetChanged();
         });
 
         binding.lvDeptList.setAdapter(adapter);

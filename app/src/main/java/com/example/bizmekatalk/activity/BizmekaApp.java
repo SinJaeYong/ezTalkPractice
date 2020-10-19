@@ -21,7 +21,7 @@ public class BizmekaApp extends Application {
 
 
     public static String COMPID = "kaoni";
-    public static String COMPNAME = "";
+    public static String COMPNAME = "(주)가온아";
 
     public static LinkedList<String> navi = new LinkedList<>();
     public static List<Item> deptList = new ArrayList<>();

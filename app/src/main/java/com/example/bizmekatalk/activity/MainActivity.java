@@ -72,8 +72,6 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-
-
     private Map<String, List<Item>> userListToMap (List<Item> itemList){
         return itemList.stream().collect(Collectors.groupingBy(item -> ((UserItem)item).getDeptId()));
     }

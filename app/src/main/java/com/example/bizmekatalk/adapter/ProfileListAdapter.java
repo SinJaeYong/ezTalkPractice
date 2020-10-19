@@ -77,8 +77,6 @@ public class ProfileListAdapter extends BaseAdapter {
             ProfileViewHolder holder = new ProfileViewHolder();
             holder.itemProfileImage = (ImageView)view.findViewById(R.id.ivProfileImage);
             holder.itemName = (TextView)view.findViewById(R.id.tvName);
-            holder.itemPosition = (TextView)view.findViewById(R.id.tvPosition);
-            holder.itemJob = (TextView)view.findViewById(R.id.tvJob);
             view.setTag(holder);
             return holder;
         }
