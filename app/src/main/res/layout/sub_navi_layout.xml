@@ -6,12 +6,13 @@
     android:background="@drawable/round_rectangle_border"
     >
     <TextView
+        android:id="@+id/tvSubDeptName"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="TEST"
+        android:text="부서"
         >
     </TextView>
 

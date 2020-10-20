@@ -25,6 +25,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.activity.BizmekaApp;
 import com.example.bizmekatalk.common.PreferenceManager;
+import com.example.bizmekatalk.fragment.sublayout.SubNaviLayout;
 import com.example.bizmekatalk.items.DeptItem;
 import com.example.bizmekatalk.items.Item;
 import com.example.bizmekatalk.items.UserItem;
@@ -122,8 +123,16 @@ public class OrganAdapter extends CustomAdapter {
             //Dept에 OnClickListener
             holder.llDeptItem.setOnClickListener(v -> {
 
+
                 BizmekaApp.navi.add(((DeptItem) items.get(position)).getDeptId());
                 BizmekaApp.COMPNAME = ((DeptItem) items.get(position)).getDeptName();
+
+                SubNaviLayout childLayout = new SubNaviLayout(context);
+                TextView tvSubDeptName = childLayout.findViewById(R.id.tvSubDeptName);
+                tvSubDeptName.setText(BizmekaApp.COMPNAME);
+                LinearLayout llDeptNavi = ((Activity)context).findViewById(R.id.llDeptNavi);
+                llDeptNavi.addView(childLayout);
+
                 TextView tvOrganTotalMember = ((Activity)context).findViewById(R.id.tvOrganTotalMember);
 
                 if(BizmekaApp.userMap.get(BizmekaApp.navi.getLast())!=null){

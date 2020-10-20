@@ -113,7 +113,7 @@
                         android:gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="TEST"
+                        android:text="(주)가온아이"
                         >
                     </TextView>
 

@@ -1,7 +1,6 @@
 package com.example.bizmekatalk.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,8 +48,10 @@ public class OrganFragment extends Fragment {
         }
 
         binding.btnDeptBack.setOnClickListener(v -> {
-            if(BizmekaApp.navi.size() > 1)
+            if(BizmekaApp.navi.size() > 1){
                 BizmekaApp.navi.removeLast();
+                binding.llDeptNavi.removeViewAt(BizmekaApp.navi.size());
+            }
             if(BizmekaApp.userMap.get(BizmekaApp.navi.getLast())!=null){
                 binding.tvOrganTotalMember.setText(String.valueOf(BizmekaApp.userMap.get(BizmekaApp.navi.getLast()).size()));
             } else {
