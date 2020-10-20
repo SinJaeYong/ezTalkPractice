@@ -15,6 +15,6 @@ public abstract class CustomAdapter extends BaseAdapter {
 
     public abstract void addData(List<Item> items);
 
-    public abstract void clear();
+    public abstract void clearData();
 
 }

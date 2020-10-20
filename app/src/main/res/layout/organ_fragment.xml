@@ -14,7 +14,7 @@
         >
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="@dimen/organ_block">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/organ_block"
             android:orientation="horizontal">
             <LinearLayout
                 android:layout_margin="10dp"
@@ -78,29 +78,55 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="@dimen/organ_block"
+            android:background="@drawable/layout_border_top_bottom"
+            >
             <LinearLayout
-                android:layout_width="50dp"
+                android:layout_width="@dimen/organ_block"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:background="@drawable/layout_border_right"
                 >
                 <Button
                     android:id="@+id/btnDeptBack"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:background="@drawable/n_btn_organ_back"
                     />
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/llDeptNavi"
                 android:layout_width="match_parent"
-                android:layout_height="50dp">
+                android:layout_height="@dimen/organ_block"
+                android:gravity="left|center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/round_rectangle_border"
+                    >
+                    <TextView
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="TEST"
+                        >
+                    </TextView>
+
+                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="@dimen/organ_block"
+            android:background="@drawable/layout_border_top_bottom"
+            >
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -113,13 +139,18 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"
                         android:text="전체 "
                         />
 
                     <TextView
+                        android:id="@+id/tvOrganTotalMember"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="32" />
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_red_light"
+                        android:text="0" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_marginLeft="10dp"
@@ -128,12 +159,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"
                         android:text="겸직 "
                         />
                     <TextView
+                        android:id="@+id/tvAddJob"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_red_light"
+                        android:text="0"
                         />
                 </LinearLayout>
 
@@ -141,7 +177,7 @@
 
             <LinearLayout
                 android:layout_alignParentRight="true"
-                android:layout_width="50dp"
+                android:layout_width="@dimen/organ_block"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 >
@@ -159,8 +195,28 @@
                 android:id="@+id/lvDeptList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:divider="@android:color/white"
+                android:dividerHeight="0dp"
                 />
         </LinearLayout>
     </LinearLayout>
+    <!--
+    <LinearLayout
+        android:id="@+id/base_progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateDrawable="@drawable/circle_progress"
+            android:indeterminateDuration="1000"/>
+    </LinearLayout>
+    -->
+
 
 </layout>

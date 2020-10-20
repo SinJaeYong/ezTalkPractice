@@ -36,8 +36,7 @@ import java.util.Vector;
 
 public class PinLoginActivity extends AppCompatActivity {
 
-    private final int MSG_USER_FLAG = 0 ;
-    private final int MSG_DEPT_FLAG = 1 ;
+
 
     private boolean pinLock=false;
 
@@ -47,6 +46,8 @@ public class PinLoginActivity extends AppCompatActivity {
     private LinkedList<Integer> pinPassList = new LinkedList<Integer>();
     private PinLoginActivityBinding binding;
 
+    private final int MSG_USER_FLAG = 0 ;
+    private final int MSG_DEPT_FLAG = 1 ;
     private Handler mHandler;
 
 
@@ -130,33 +131,9 @@ public class PinLoginActivity extends AppCompatActivity {
 
         if(pinPassList.size() == maxCount) {
             pinLock = true;
-            //new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200);
-            mHandler = new Handler(Looper.myLooper()){
-                boolean userFlag = false;
-                boolean deptFlag = false;
-                @Override
-                public void handleMessage(@NonNull Message msg) {
-                    Log.i("jay.PinLoginActivity","handleMessage");
-                    Log.i("jay.PinLoginActivity","msg.what : "+msg.what);
-                    switch (msg.what){
-                        case MSG_USER_FLAG:
-                            userFlag = true;
-                            Log.i("jay.PinLoginActivity","userFlag");
-                            break;
-                        case MSG_DEPT_FLAG:
-                            deptFlag = true;
-                            break;
-                        default:
-                            break;
-                    }
-                    if(userFlag&&deptFlag){
-                        Log.i("jay.PinLoginActivity","okFLag");
-                        moveToMain();
-                    }
-                }
-            };
-            setAllUserInfo(new RequestParamBuilder().getAllUserInfoParam().build());
-            setAllDeptInfo(new RequestParamBuilder().getAllDeptInfoParam().build());
+            new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200);
+            //moveToMain();
+
         }
 
 
@@ -184,9 +161,34 @@ public class PinLoginActivity extends AppCompatActivity {
     private void moveToMain(){
 
         if(validatePin()){
-            Intent intent = new Intent(PinLoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            mHandler = new Handler(Looper.myLooper()){
+                boolean userFlag = false;
+                boolean deptFlag = false;
+                @Override
+                public void handleMessage(@NonNull Message msg) {
+                    Log.i("jay.PinLoginActivity","handleMessage");
+                    Log.i("jay.PinLoginActivity","msg.what : "+msg.what);
+                    switch (msg.what){
+                        case MSG_USER_FLAG:
+                            userFlag = true;
+                            Log.i("jay.PinLoginActivity","userFlag");
+                            break;
+                        case MSG_DEPT_FLAG:
+                            deptFlag = true;
+                            break;
+                        default:
+                            break;
+                    }
+                    if(userFlag&&deptFlag){
+                        Log.i("jay.PinLoginActivity","okFLag");
+                        Intent intent = new Intent(PinLoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+            };
+            setAllUserInfo(new RequestParamBuilder().getAllUserInfoParam().build());
+            setAllDeptInfo(new RequestParamBuilder().getAllDeptInfoParam().build());
         }else{
             binding.pinLinear.startAnimation(pinDotsAni);
             Log.i(PreferenceManager.TAG,"핀 로그인 입력 오류");

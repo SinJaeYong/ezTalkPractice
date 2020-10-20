@@ -3,91 +3,130 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp"
+    android:paddingLeft="20dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     >
-    <ImageView
-        android:id="@+id/ivProfileImage"
-        android:scaleType="fitXY"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:src="@drawable/tab_group"
-        />
-
     <LinearLayout
-        android:layout_weight="4"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:orientation="vertical"
+        android:id="@+id/llUserItem"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:visibility="visible"
         >
         <LinearLayout
-            android:id="@+id/llUserItem"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:visibility="visible"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/tvUserName"
-                android:gravity="center|left"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="20dp"
+            >
+            <ImageView
+                android:id="@+id/ivProfileImage"
+                android:scaleType="fitXY"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textColor="@android:color/black"
-                android:textSize="20sp"
-                android:text="userName"
-                android:textStyle="bold"
+                android:layout_height="match_parent"
+                android:src="@drawable/tab_group"
                 />
-            <TextView
-                android:id="@+id/tvUserDeptName"
-                android:gravity="center|left"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textSize="15sp"
-                android:text="deptName"
-                />
-
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llDeptItem"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            >
             <LinearLayout
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center|left"
                 >
                 <TextView
-                    android:id="@+id/tvDeptName"
-                    android:layout_marginLeft="20dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:id="@+id/tvUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
-                    android:textSize="20sp"
-                    android:text="DEPATMENT"
+                    android:textSize="17sp"
+                    android:text="userName"
                     android:textStyle="bold"
                     />
             </LinearLayout>
-
             <LinearLayout
-                android:visibility="visible"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center|left"
                 >
-                <ImageView
-                    android:id="@+id/ivIsLeaf"
+                <TextView
+                    android:id="@+id/tvUserDeptName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/n_icon_organ_arrow_right"
+                    android:textSize="14sp"
+                    android:text="deptName"
                     />
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
 
+
+    <LinearLayout
+        android:id="@+id/llDeptItem"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:visibility="visible"
+        >
+        <LinearLayout
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="20dp"
+            >
+            <ImageView
+                android:id="@+id/ivDeptImage"
+                android:scaleType="fitXY"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/tab_group"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="260dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    >
+                    <TextView
+                        android:id="@+id/tvDeptName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
+                        android:text="DEPATMENT"
+                        android:textStyle="bold"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="visible"
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_alignParentEnd="true"
+                    >
+                    <ImageView
+                        android:id="@+id/ivIsLeaf"
+                        android:layout_width="7dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/n_icon_organ_arrow_right"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

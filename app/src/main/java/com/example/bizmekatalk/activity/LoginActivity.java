@@ -63,6 +63,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    //PinRegister로 이동하기 위하여 입력값 validate, token 저장 후 이동(동기처리를 위하여 delay 2초 대기)
+    private boolean moveToPinRegister(){
+        if(Validation.validateLogin(binding.userIdEdit, binding.userPwdEdit, binding.compIdEdit)){
+            RequestParams params = new RequestParamBuilder().
+                    setPath(new ApiPath("Authentication","Login")).
+                    setBodyJson("userid","fhZ6hZSfV5UG/CjJEyTsUA==").
+                    setBodyJson("compid","P1Ao25+VqxuNq9ijelCnnw==").
+                    setBodyJson("pwd","1dBcLJsXZJkGl/WdAxYtcw==").
+                    setBodyJson("type","M").
+                    build();
+
+            createMyPost(params);
+        }
+        else{
+            CustomDialog customDialog = new CustomDialog(LoginActivity.this);
+            customDialog.callFunction("입력 정보가 올바르지 않습니다.");
+            return false;
+        }
+        return true;
+    }//moveToPin
 
 
     private void createMyPost(RequestParams params){
@@ -94,26 +114,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-    //PinRegister로 이동하기 위하여 입력값 validate, token 저장 후 이동(동기처리를 위하여 delay 2초 대기)
-    private boolean moveToPinRegister(){
-        if(Validation.validateLogin(binding.userIdEdit, binding.userPwdEdit, binding.compIdEdit)){
-            RequestParams params = new RequestParamBuilder().
-                    setPath(new ApiPath("Authentication","Login")).
-                    setBodyJson("userid","fhZ6hZSfV5UG/CjJEyTsUA==").
-                    setBodyJson("compid","P1Ao25+VqxuNq9ijelCnnw==").
-                    setBodyJson("pwd","1dBcLJsXZJkGl/WdAxYtcw==").
-                    setBodyJson("type","M").
-                    build();
 
-            createMyPost(params);
-        }
-        else{
-            CustomDialog customDialog = new CustomDialog(LoginActivity.this);
-            customDialog.callFunction("입력 정보가 올바르지 않습니다.");
-            return false;
-        }
-        return true;
-    }//moveToPin
 
     @Override
     protected void onDestroy() {

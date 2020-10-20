@@ -16,6 +16,10 @@ import com.example.bizmekatalk.activity.BizmekaApp;
 import com.example.bizmekatalk.adapter.OrganAdapter;
 
 import com.example.bizmekatalk.databinding.OrganFragmentBinding;
+import com.example.bizmekatalk.items.Item;
+import com.example.bizmekatalk.items.UserItem;
+
+import java.util.List;
 
 public class OrganFragment extends Fragment {
     private OrganAdapter adapter;
@@ -24,12 +28,21 @@ public class OrganFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         OrganFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.organ_fragment, container, false);
+
         binding.setOrganFragment(this);
-        adapter = new OrganAdapter();
-        //Log.i("jay.OrganFragment", "deptMap : "+BizmekaApp.deptMap.toString());
-        BizmekaApp.navi.add("s907000");
-        Log.i("jay.OrganFragment","navi.userMap : "+BizmekaApp.userMap.toString());
+        adapter = new OrganAdapter(getActivity());
+
+        if(BizmekaApp.userMap.get(BizmekaApp.navi.getLast())!=null){
+            binding.tvOrganTotalMember.setText(String.valueOf(BizmekaApp.userMap.get(BizmekaApp.navi.getLast()).size()));
+        } else {
+            binding.tvOrganTotalMember.setText("0");
+        }
+
         if (adapter != null ){
+            List<Item> items = BizmekaApp.userMap.get(BizmekaApp.navi.getLast());
+            for(Item item : items){
+                ((UserItem)item).setDeptName(BizmekaApp.COMPNAME);
+            }
             adapter.setData( BizmekaApp.userMap.get(BizmekaApp.navi.getLast()) );
             adapter.addData( BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()) );
             adapter.notifyDataSetChanged();
@@ -38,8 +51,12 @@ public class OrganFragment extends Fragment {
         binding.btnDeptBack.setOnClickListener(v -> {
             if(BizmekaApp.navi.size() > 1)
                 BizmekaApp.navi.removeLast();
-            Log.i("jay.OrganFragment","navi.getLast : "+BizmekaApp.navi.getLast());
-            adapter.clear();
+            if(BizmekaApp.userMap.get(BizmekaApp.navi.getLast())!=null){
+                binding.tvOrganTotalMember.setText(String.valueOf(BizmekaApp.userMap.get(BizmekaApp.navi.getLast()).size()));
+            } else {
+                binding.tvOrganTotalMember.setText("0");
+            }
+            adapter.clearData();
             adapter.addData( BizmekaApp.userMap.get(BizmekaApp.navi.getLast()) );
             adapter.addData( BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()) );
             adapter.notifyDataSetChanged();
