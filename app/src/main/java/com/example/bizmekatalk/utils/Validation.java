@@ -19,8 +19,10 @@ public class Validation {
     public static <T extends EditText> boolean validatePin(T... ts) {
         String pin1 = ts[0].getText().toString();
         String pin2 = ts[1].getText().toString();
-
-        return pin1.equals(pin2);
+        if( !"".equals(pin1) && !"".equals(pin1) )
+            return pin1.equals(pin2);
+        else
+            return false;
     }//pinValidation
 
     public static boolean isNumber(String str) {

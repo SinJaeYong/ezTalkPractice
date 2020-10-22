@@ -25,6 +25,7 @@ import com.example.bizmekatalk.databinding.PinLoginActivityBinding;
 import com.example.bizmekatalk.items.DeptItem;
 import com.example.bizmekatalk.items.UserItem;
 import com.example.bizmekatalk.common.PreferenceManager;
+import com.example.bizmekatalk.utils.ProgressDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +37,7 @@ import java.util.Vector;
 
 public class PinLoginActivity extends AppCompatActivity {
 
-
+    ProgressDialog progressDialog;
 
     private boolean pinLock=false;
 
@@ -131,6 +132,8 @@ public class PinLoginActivity extends AppCompatActivity {
 
         if(pinPassList.size() == maxCount) {
             pinLock = true;
+            progressDialog = new ProgressDialog(this);
+            progressDialog.show();
             new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200);
             //moveToMain();
 
@@ -159,7 +162,6 @@ public class PinLoginActivity extends AppCompatActivity {
     }
 
     private void moveToMain(){
-
         if(validatePin()){
             mHandler = new Handler(Looper.myLooper()){
                 boolean userFlag = false;
@@ -181,6 +183,7 @@ public class PinLoginActivity extends AppCompatActivity {
                     }
                     if(userFlag&&deptFlag){
                         Log.i("jay.PinLoginActivity","okFLag");
+                        progressDialog.close();
                         Intent intent = new Intent(PinLoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();

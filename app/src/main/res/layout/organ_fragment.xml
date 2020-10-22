@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -32,45 +33,39 @@
             <LinearLayout
                 android:layout_margin="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
+
                 <LinearLayout
-                    android:padding="5dp"
                     android:layout_width="0dp"
-                    android:layout_weight="7"
                     android:layout_height="wrap_content"
+                    android:layout_weight="7"
                     android:background="@drawable/round_rectangle_4"
                     android:backgroundTint="@color/light_gray"
-                    >
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:src="@drawable/n_icon_search"
-                        />
+                    android:padding="5dp">
 
-                    <EditText
+                    <androidx.appcompat.widget.SearchView
+                        android:id="@+id/svOrganSearch"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
-                        android:hint="검색"
-                        android:background="@null"
-                        />
+                        app:iconifiedByDefault="false"
+                        app:queryHint="검색"
+                        app:searchIcon="@drawable/n_icon_search" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="18dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_height="match_parent"
-                    >
+                    android:layout_weight="1">
+
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="검색"
-                        android:textColor="@android:color/white"
                         android:background="@drawable/round_rectangle_4"
                         android:backgroundTint="@color/kaoni_blue"
-                        />
+                        android:text="검색"
+                        android:textColor="@android:color/white" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -82,44 +77,49 @@
             android:background="@drawable/layout_border_top_bottom"
             >
             <LinearLayout
+                android:id="@+id/btnDeptBack"
                 android:layout_width="@dimen/organ_block"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:background="@drawable/layout_border_right"
                 >
-                <Button
-                    android:id="@+id/btnDeptBack"
+                <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:background="@drawable/n_btn_organ_back"
                     />
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/llDeptNavi"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/organ_block"
-                android:gravity="left|center"
-                android:orientation="horizontal">
-
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                >
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginLeft="10dp"
-                    android:background="@drawable/round_rectangle_border"
+                    android:id="@+id/llDeptNavi"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/organ_block"
+                    android:gravity="left|center"
+                    android:orientation="horizontal"
                     >
-                    <TextView
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:gravity="center"
+                    <LinearLayout
+                        android:id="@+id/llDeptNaviFirst"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="(주)가온아이"
+                        android:layout_height="36dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/round_rectangle_border"
                         >
-                    </TextView>
-
+                        <TextView
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="(주)가온아이"
+                            >
+                        </TextView>
+                    </LinearLayout>
                 </LinearLayout>
-
-            </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
 
         <RelativeLayout

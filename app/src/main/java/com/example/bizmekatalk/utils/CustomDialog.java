@@ -32,31 +32,31 @@ public class CustomDialog {
     public void callFunction(final String message) {
 
 
-        final Dialog dlg = new Dialog(context);
+        final Dialog dialog = new Dialog(context);
 
-        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         // 커스텀 다이얼로그의 레이아웃 설정
-        dlg.setContentView(R.layout.custom_dialog);
-        dlg.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setContentView(R.layout.custom_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        final TextView alertTitle = (TextView)dlg.findViewById(R.id.alert_title);
-        final Button alertOkButton = (Button) dlg.findViewById(R.id.alert_ok_button);
-        final Button alertCancelButton = (Button) dlg.findViewById(R.id.alert_cancel_button);
+        final TextView alertTitle = (TextView)dialog.findViewById(R.id.alert_title);
+        final Button alertOkButton = (Button) dialog.findViewById(R.id.alert_ok_button);
+        final Button alertCancelButton = (Button) dialog.findViewById(R.id.alert_cancel_button);
         alertTitle.setText(message);
-        dlg.show();
+        dialog.show();
 
         alertOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(PreferenceManager.TAG,"Dialogue_Message : "+message);
-                dlg.dismiss();
+                dialog.dismiss();
             }
         });//람다식 사용하기
         alertCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 커스텀 다이얼로그 종료
-                dlg.dismiss();
+                dialog.dismiss();
             }
         });
     }

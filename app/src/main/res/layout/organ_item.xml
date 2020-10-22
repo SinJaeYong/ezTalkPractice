@@ -17,13 +17,14 @@
             android:layout_width="45dp"
             android:layout_height="match_parent"
             android:layout_marginRight="20dp"
+            android:gravity="center"
             >
             <ImageView
                 android:id="@+id/ivProfileImage"
                 android:scaleType="fitXY"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/tab_group"
+                android:src="@drawable/no_image"
                 />
         </LinearLayout>
 
@@ -82,7 +83,7 @@
                 android:scaleType="fitXY"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/tab_group"
+                android:src="@drawable/n_icon_info_department"
                 />
         </LinearLayout>
 

@@ -20,7 +20,6 @@ public class BizmekaApp extends Application {
 
     private static Context mContext;
 
-
     public static String COMPID = "kaoni";
     public static String COMPNAME = "(주)가온아이";
 

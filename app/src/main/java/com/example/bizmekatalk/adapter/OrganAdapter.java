@@ -6,11 +6,14 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -127,11 +130,28 @@ public class OrganAdapter extends CustomAdapter {
                 BizmekaApp.navi.add(((DeptItem) items.get(position)).getDeptId());
                 BizmekaApp.COMPNAME = ((DeptItem) items.get(position)).getDeptName();
 
+                LinearLayout llDeptNavi = ((Activity)context).findViewById(R.id.llDeptNavi);
                 SubNaviLayout childLayout = new SubNaviLayout(context);
+                childLayout.setTag(BizmekaApp.navi.size());
+                childLayout.setOnClickListener(v1 -> {
+                    int naviNum = (Integer) childLayout.getTag();
+                    int naviSize = BizmekaApp.navi.size();
+                    llDeptNavi.removeViews(naviNum, naviSize - naviNum);
+                    for(int i = 0 ; i < naviSize - naviNum ; i++){
+                        BizmekaApp.navi.removeLast();
+                    }
+                    clearData();
+                    addData(BizmekaApp.userMap.get(BizmekaApp.navi.getLast()));
+                    addData(BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()));
+                    notifyDataSetChanged();
+                });
+
                 TextView tvSubDeptName = childLayout.findViewById(R.id.tvSubDeptName);
                 tvSubDeptName.setText(BizmekaApp.COMPNAME);
-                LinearLayout llDeptNavi = ((Activity)context).findViewById(R.id.llDeptNavi);
+                //HorizontalScrollView scDeptNavi = ((Activity)context).findViewById(R.id.scDeptNavi);
+                //scDeptNavi.addView(childLayout);
                 llDeptNavi.addView(childLayout);
+
 
                 TextView tvOrganTotalMember = ((Activity)context).findViewById(R.id.tvOrganTotalMember);
 
@@ -188,13 +208,13 @@ public class OrganAdapter extends CustomAdapter {
         final Handler handler = new Handler(Looper.myLooper());
 
         if(PreferenceManager.getUploadUrl().equals(imgUrl)){
-            Glide.with(context).load(R.drawable.user_profile_icon1).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(holder.ivProfileImage);
+            Glide.with(context).load(R.drawable.no_image).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(holder.ivProfileImage);
         }else {
             Glide.with(context).load(imgUrl).
                     listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            handler.post(() -> Glide.with(context).load(R.drawable.user_profile_icon1).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(holder.ivProfileImage));
+                            handler.post(() -> Glide.with(context).load(R.drawable.no_image).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(holder.ivProfileImage));
                             return false;
                         }
 
