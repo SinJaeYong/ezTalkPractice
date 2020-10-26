@@ -52,12 +52,12 @@
                         app:queryHint="검색"
                         app:searchIcon="@drawable/n_icon_search" />
                 </LinearLayout>
-
+                <!--
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="18dp"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
-                    android:layout_weight="1">
+                    >
 
                     <Button
                         android:layout_width="match_parent"
@@ -68,6 +68,7 @@
                         android:textColor="@android:color/white" />
 
                 </LinearLayout>
+                -->
             </LinearLayout>
         </LinearLayout>
 

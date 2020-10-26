@@ -57,10 +57,6 @@ public class PinRegisterActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
     private void setDataBinding() {
         binding = PinRegisterActivityBinding.inflate(getLayoutInflater());
         View lView = binding.getRoot();
@@ -76,7 +72,6 @@ public class PinRegisterActivity extends AppCompatActivity {
             return true;
         });
     }
-
 
 
     //입력값 검증,Pin값 저장 후 MainActivity로 이동

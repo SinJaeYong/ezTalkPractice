@@ -2,8 +2,10 @@ package com.example.bizmekatalk.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -27,6 +29,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.bizmekatalk.R;
 import com.example.bizmekatalk.activity.BizmekaApp;
+import com.example.bizmekatalk.activity.LoginActivity;
+import com.example.bizmekatalk.activity.PinLoginActivity;
+import com.example.bizmekatalk.activity.UserProfileActivity;
 import com.example.bizmekatalk.common.PreferenceManager;
 import com.example.bizmekatalk.fragment.sublayout.SubNaviLayout;
 import com.example.bizmekatalk.items.DeptItem;
@@ -41,13 +46,9 @@ public class OrganAdapter extends CustomAdapter {
 
     private Context context;
 
-    private List<Item> deptUserList;
-    private List<Item> deptList;
 
     public OrganAdapter(Context context){
         this.context = context;
-        deptUserList = BizmekaApp.userMap.get(BizmekaApp.navi.getLast());
-        deptList = BizmekaApp.deptMap.get(BizmekaApp.navi.getLast());
     }
 
 
@@ -109,24 +110,27 @@ public class OrganAdapter extends CustomAdapter {
         //Log.i("jay.DeptListAdapter","typename : "+items.get(position).getType());
         //Log.i("jay.OrganAdapter","items : "+(items.get(position)).toString());
         if("UserItem".equals(items.get(position).getType())){
-
+            //null체크
             holder.llDeptItem.setVisibility(View.GONE);
             holder.llUserItem.setVisibility(View.VISIBLE);
             holder.tvUserDeptName.setText(((UserItem)items.get(position)).getDeptName());
             holder.tvUserName.setText(((UserItem)items.get(position)).getName());
-            String imgUrl = PreferenceManager.getUploadUrl() + ((UserItem)items.get(position)).getProfileImage();
-            setProfileImg(holder,imgUrl);
+            String imgUrl = ((UserItem)items.get(position)).getProfileImage();
+            setProfileImg(holder.ivProfileImage,imgUrl,context);
+
+            holder.llUserItem.setOnClickListener(v -> {
+                Intent intent = new Intent(context, UserProfileActivity.class);
+                intent.putExtra("parcel",((UserItem)items.get(position)));
+                context.startActivity(intent);
+            });
 
         } else {
+            //null 체크
             holder.llUserItem.setVisibility(View.GONE);
             holder.llDeptItem.setVisibility(View.VISIBLE);
-            if (holder.tvDeptName != null) {
-                holder.tvDeptName.setText(((DeptItem)items.get(position)).getDeptName());
-            }
+            holder.tvDeptName.setText(((DeptItem)items.get(position)).getDeptName());
             //Dept에 OnClickListener
             holder.llDeptItem.setOnClickListener(v -> {
-
-
                 BizmekaApp.navi.add(((DeptItem) items.get(position)).getDeptId());
                 BizmekaApp.COMPNAME = ((DeptItem) items.get(position)).getDeptName();
 
@@ -196,25 +200,24 @@ public class OrganAdapter extends CustomAdapter {
 
     }
 
-    private void setProfileImg(Holder holder, String imgUrl){
+    private void setProfileImg(ImageView iv, String imgUrl, Context context){
 
-        //Log.i("jay.OrganAdapter","imgUrl : "+imgUrl);
-        if(holder.ivProfileImage!=null){
+        if(iv!=null){
             GradientDrawable drawable=(GradientDrawable)context.getDrawable(R.drawable.profile_background_rounding);
-            holder.ivProfileImage.setBackground(drawable);
-            holder.ivProfileImage.setClipToOutline(true);
+            iv.setBackground(drawable);
+            iv.setClipToOutline(true);
         }
 
         final Handler handler = new Handler(Looper.myLooper());
 
         if(PreferenceManager.getUploadUrl().equals(imgUrl)){
-            Glide.with(context).load(R.drawable.no_image).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(holder.ivProfileImage);
+            Glide.with(context).load(R.drawable.no_image).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(iv);
         }else {
             Glide.with(context).load(imgUrl).
                     listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            handler.post(() -> Glide.with(context).load(R.drawable.no_image).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(holder.ivProfileImage));
+                            handler.post(() -> Glide.with(context).load(R.drawable.no_image).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(iv));
                             return false;
                         }
 
@@ -223,7 +226,7 @@ public class OrganAdapter extends CustomAdapter {
                             return false;
                         }
                     }).
-                    transform(new CenterCrop()).into(holder.ivProfileImage);
+                    transform(new CenterCrop()).into(iv);
         }
     }
 

@@ -18,6 +18,7 @@
             android:layout_height="50dp"
             android:orientation="horizontal">
             <LinearLayout
+                android:id="@+id/llBack"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -48,11 +49,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/llBookMark"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:gravity="center"
                 android:layout_height="match_parent">
                 <ImageView
+                    android:id="@+id/ivBookMark"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/n_btn_info_bookmark"
@@ -68,7 +71,7 @@
             >
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="250dp"
                 android:orientation="vertical"
                 android:gravity="center"
                 >
@@ -78,6 +81,7 @@
                     android:orientation="vertical"
                     >
                     <ImageView
+                        android:id="@+id/ivProfileImage"
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:src="@drawable/no_image"
@@ -89,41 +93,47 @@
                         android:gravity="center_horizontal"
                         >
                         <TextView
+                            android:paddingTop="5dp"
+                            android:id="@+id/tvName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="20sp"
                             android:text="이름"
+                            android:textColor="@android:color/black"
                             android:textStyle="bold"
                             />
+
                         <TextView
+                            android:id="@+id/tvStatus"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="7dp"
                             android:layout_marginLeft="10dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="업무"
-                            />
+                            android:text="업무" />
 
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="프로필"
-                            />
-                    </LinearLayout>
-
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="250dp"
+                    android:layout_height="80dp"
+                    android:gravity="center_horizontal"
+                    >
+                    <TextView
+                        android:paddingTop="10dp"
+                        android:id="@+id/tvMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="프로필"
+                        />
+                </LinearLayout>
+
 
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="80dp"
                 android:orientation="horizontal"
                 >
                 <LinearLayout
@@ -217,7 +227,7 @@
             android:gravity="center_horizontal"
             >
             <LinearLayout
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -247,17 +257,18 @@
                             android:src="@drawable/n_icon_info_company"
                             />
                     </LinearLayout>
+
                     <LinearLayout
-                        android:layout_marginLeft="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        >
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center_vertical">
+
                         <TextView
+                            android:id="@+id/tvCompName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="회사명"
-                            />
+                            android:text="" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -283,6 +294,7 @@
                         android:gravity="center_vertical"
                         >
                         <TextView
+                            android:id="@+id/tvDeptName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="부서명"
@@ -313,6 +325,7 @@
                         android:gravity="center_vertical"
                         >
                         <TextView
+                            android:id="@+id/tvPosition"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="직위명"
@@ -343,6 +356,7 @@
                         android:gravity="center_vertical"
                         >
                         <TextView
+                            android:id="@+id/tvEmail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="메일"
@@ -373,6 +387,7 @@
                         android:gravity="center_vertical"
                         >
                         <TextView
+                            android:id="@+id/tvMobile"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="개인전화"
@@ -403,6 +418,7 @@
                         android:gravity="center_vertical"
                         >
                         <TextView
+                            android:id="@+id/tvTel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="회사전화"

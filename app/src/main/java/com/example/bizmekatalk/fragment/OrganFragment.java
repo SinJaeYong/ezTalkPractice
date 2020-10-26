@@ -1,6 +1,7 @@
 package com.example.bizmekatalk.fragment;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import com.example.bizmekatalk.items.DeptItem;
 import com.example.bizmekatalk.items.Item;
 import com.example.bizmekatalk.items.UserItem;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,34 +32,47 @@ public class OrganFragment extends Fragment {
     private OrganAdapter adapter;
     private OrganFragmentBinding binding;
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        adapter = new OrganAdapter(context);
+        Log.i("jay.OrganFragment","userMap : "+BizmekaApp.userMap.keySet().toString());
+        Log.i("jay.OrganFragment","navi : "+BizmekaApp.navi.getLast());
+
+        adapter.clearData();
+        List<Item> items = BizmekaApp.userMap.get(BizmekaApp.navi.getLast());
+        if(items != null){
+            for (Item item : items) {
+                ((UserItem) item).setDeptName(BizmekaApp.COMPNAME);
+            }
+        }
+        adapter.addData(items);
+        adapter.addData(BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()));
+        adapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.organ_fragment, container, false);
-
-        adapter = new OrganAdapter(getActivity());
-
         //첫번째 네비게이션 클릭시
         binding.llDeptNaviFirst.setOnClickListener(v -> {
+            Log.i("jay.OrganFragment","onClick");
             clearNavi();
             updateData(BizmekaApp.userMap.get(BizmekaApp.navi.getLast()), BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()));
         });
 
-        //부서원 수 표
+        //부서원 수 표시
         updateTotalMember( BizmekaApp.userMap.get(BizmekaApp.navi.getLast()) );
 
-        //첫 화면 표시
-        if (adapter != null ){
-            List<Item> items = BizmekaApp.userMap.get(BizmekaApp.navi.getLast());
-            for(Item item : items){
-                ((UserItem)item).setDeptName(BizmekaApp.COMPNAME);
-            }
-            adapter.setData( BizmekaApp.userMap.get(BizmekaApp.navi.getLast()) );
-            adapter.addData( BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()) );
-            adapter.notifyDataSetChanged();
-        }
-
-        //부서트리 백키 눌렀을
+        //부서 백키 눌렀을 때
         binding.btnDeptBack.setOnClickListener(v -> {
             if(BizmekaApp.navi.size() > 1){
                 BizmekaApp.navi.removeLast();
@@ -82,9 +97,13 @@ public class OrganFragment extends Fragment {
                 List<Item> userList = BizmekaApp.userList.stream().filter(item -> ((UserItem)item).getName().contains(newText)).collect(Collectors.toList());
                 List<Item> deptList = BizmekaApp.deptList.stream().filter(item -> ((DeptItem)item).getDeptName().contains(newText)).collect(Collectors.toList());
                 if("".equals(newText)){
+                    Log.i("jay.OrganFragment","textChange");
+                    /*
                     clearNavi();
                     updateData(BizmekaApp.userMap.get(BizmekaApp.navi.getLast()), BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()));
                     updateTotalMember( BizmekaApp.userMap.get(BizmekaApp.navi.getLast()) );
+
+                     */
                 } else{
                     updateData( userList, deptList );
                     updateTotalMember( userList );
@@ -136,4 +155,9 @@ public class OrganFragment extends Fragment {
         return false;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //clearNavi();
+    }
 }

@@ -38,6 +38,7 @@
             android:windowSoftInputMode="adjustResize"
             />
         <activity android:name=".activity.PinLoginActivity"/>
+        <activity android:name=".activity.UserProfileActivity"/>
     </application>
 
 </manifest>

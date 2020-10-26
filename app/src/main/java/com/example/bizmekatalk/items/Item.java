@@ -1,9 +1,7 @@
 package com.example.bizmekatalk.items;
 
-public abstract class Item {
+public interface Item {
 
-    public String getType() {
-        return this.getClass().getSimpleName();
-    }
+    public String getType();
 
 }

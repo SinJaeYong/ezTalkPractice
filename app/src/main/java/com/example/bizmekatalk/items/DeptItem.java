@@ -10,13 +10,13 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class DeptItem extends Item{
+public class DeptItem implements Item{
     private String deptName;
     private String isLeaf;
     private String deptId;
     private String parentDeptId;
 
-    public DeptItem(){};
+    public DeptItem(){}
 
     public DeptItem(JSONObject deptData){
         try {
@@ -31,4 +31,8 @@ public class DeptItem extends Item{
         }
     }
 
+    @Override
+    public String getType() {
+        return this.getClass().getSimpleName();
+    }
 }

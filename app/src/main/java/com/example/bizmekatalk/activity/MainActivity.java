@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity{
         BizmekaApp.deptMap = deptListToMap(BizmekaApp.deptList);
         BizmekaApp.userMap = userListToMap(BizmekaApp.userList);
 
-        Log.i("jay.DataRepository","beforeCallBack");
         //setAllDeptInfo(new RequestParamBuilder().getAllDeptInfoParam().build());
         //setAllUserInfo(new RequestParamBuilder().getAllUserInfoParam().build());
 
@@ -67,7 +66,6 @@ public class MainActivity extends AppCompatActivity{
 
         getSupportActionBar().hide();
 
-        Log.i("jay.DataRepository","beforeBotNavi");
         configureBottomNavigation();
     }
 
@@ -76,6 +74,7 @@ public class MainActivity extends AppCompatActivity{
     private Map<String, List<Item>> userListToMap (List<Item> itemList){
         return itemList.stream().collect(Collectors.groupingBy(item -> ((UserItem)item).getDeptId()));
     }
+
     private Map<String, List<Item>> deptListToMap (List<Item> itemList){
         return itemList.stream().collect(Collectors.groupingBy(item -> ((DeptItem)item).getParentDeptId()));
     }

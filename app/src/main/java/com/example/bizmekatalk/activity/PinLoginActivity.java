@@ -31,9 +31,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 public class PinLoginActivity extends AppCompatActivity {
 
@@ -42,9 +42,9 @@ public class PinLoginActivity extends AppCompatActivity {
     private boolean pinLock=false;
 
     private Animation pinDotsAni;
-    private List<ImageView> pinDots = new Vector<ImageView>();
-    private List<TextView> pinBtns = new Vector<TextView>();
-    private LinkedList<Integer> pinPassList = new LinkedList<Integer>();
+    private List<ImageView> pinDots = new ArrayList<>();
+    private List<TextView> pinBtns = new ArrayList<>();
+    private LinkedList<Integer> pinPassList = new LinkedList<>();
     private PinLoginActivityBinding binding;
 
     private final int MSG_USER_FLAG = 0 ;

@@ -9,7 +9,7 @@ import java.util.List;
 
 public abstract class CustomAdapter extends BaseAdapter {
 
-    protected List<Item> items;
+    protected List<Item> items = new ArrayList<>();
 
     public abstract void setData(List<Item> items);
 
