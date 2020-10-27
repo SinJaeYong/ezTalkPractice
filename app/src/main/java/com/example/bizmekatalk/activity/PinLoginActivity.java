@@ -34,6 +34,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class PinLoginActivity extends AppCompatActivity {
 
@@ -132,73 +134,77 @@ public class PinLoginActivity extends AppCompatActivity {
 
         if(pinPassList.size() == maxCount) {
             pinLock = true;
-            progressDialog = new ProgressDialog(this);
-            progressDialog.show();
-            new Handler(Looper.myLooper()).postDelayed(() -> moveToMain(), 200);
-            //moveToMain();
+            if(validatePin()){
+                moveToMain();
+                new Handler(Looper.myLooper()).postDelayed(() ->{ clearPin(); pinLock = false; }, 500);
+            } else{
+                binding.pinLinear.startAnimation(pinDotsAni);
+                Log.i(PreferenceManager.TAG,"핀 로그인 입력 오류");
+                new Handler(Looper.myLooper()).postDelayed(() -> { clearPin(); pinLock = false; }, 500);
+            }
 
+
+            //moveToMain();
         }
 
 
     }///setPins(int pinNumber,int maxCount)
 
 
+    private void clearPin(){
+        for(int i=0; i<pinPassList.size(); i++){
+            pinDots.get(i).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
+        }
+        pinPassList.clear();
+    }
 
     //
     private boolean validatePin(){
 
-        //사용자 핀 설정
+        //사용자 핀
         String pass = PreferenceManager.getString(PreferenceManager.getPinKey());
 
-        //입력 핀 설정
+        //입력 핀
         StringBuffer buffer = new StringBuffer();
-        for(int i=0; i<pinPassList.size(); i++){
-            pinDots.get(i).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
-            buffer.append(pinPassList.get(i));
-        }
-
+        pinPassList.stream().forEach(i -> buffer.append(i));
         return pass.equals(buffer.toString());
 
     }
 
     private void moveToMain(){
-        if(validatePin()){
-            mHandler = new Handler(Looper.myLooper()){
-                boolean userFlag = false;
-                boolean deptFlag = false;
-                @Override
-                public void handleMessage(@NonNull Message msg) {
-                    Log.i("jay.PinLoginActivity","handleMessage");
-                    Log.i("jay.PinLoginActivity","msg.what : "+msg.what);
-                    switch (msg.what){
-                        case MSG_USER_FLAG:
-                            userFlag = true;
-                            Log.i("jay.PinLoginActivity","userFlag");
-                            break;
-                        case MSG_DEPT_FLAG:
-                            deptFlag = true;
-                            break;
-                        default:
-                            break;
-                    }
-                    if(userFlag&&deptFlag){
-                        Log.i("jay.PinLoginActivity","okFLag");
-                        progressDialog.close();
-                        Intent intent = new Intent(PinLoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                }
-            };
-            setAllUserInfo(new RequestParamBuilder().getAllUserInfoParam().build());
-            setAllDeptInfo(new RequestParamBuilder().getAllDeptInfoParam().build());
-        }else{
-            binding.pinLinear.startAnimation(pinDotsAni);
-            Log.i(PreferenceManager.TAG,"핀 로그인 입력 오류");
-            pinLock = false;
-        }
 
-        pinPassList.clear();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.show();
+        mHandler = new Handler(Looper.myLooper()){
+            boolean userFlag = false;
+            boolean deptFlag = false;
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                Log.i("jay.PinLoginActivity","handleMessage");
+                Log.i("jay.PinLoginActivity","msg.what : "+msg.what);
+                switch (msg.what){
+                    case MSG_USER_FLAG:
+                        userFlag = true;
+                        Log.i("jay.PinLoginActivity","userFlag");
+                        break;
+                    case MSG_DEPT_FLAG:
+                        deptFlag = true;
+                        break;
+                    default:
+                        break;
+                }
+                if(userFlag&&deptFlag){
+                    Log.i("jay.PinLoginActivity","okFLag");
+                    Intent intent = new Intent(PinLoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                    progressDialog.close();
+                }
+            }
+        };
+        setAllUserInfo(new RequestParamBuilder().getAllUserInfoParam().build());
+        setAllDeptInfo(new RequestParamBuilder().getAllDeptInfoParam().build());
+
     }//validatePins()
 
 

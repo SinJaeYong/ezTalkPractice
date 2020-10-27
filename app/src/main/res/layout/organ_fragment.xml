@@ -52,23 +52,6 @@
                         app:queryHint="검색"
                         app:searchIcon="@drawable/n_icon_search" />
                 </LinearLayout>
-                <!--
-                <LinearLayout
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    >
-
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/round_rectangle_4"
-                        android:backgroundTint="@color/kaoni_blue"
-                        android:text="검색"
-                        android:textColor="@android:color/white" />
-
-                </LinearLayout>
-                -->
             </LinearLayout>
         </LinearLayout>
 
@@ -102,23 +85,6 @@
                     android:gravity="left|center"
                     android:orientation="horizontal"
                     >
-                    <LinearLayout
-                        android:id="@+id/llDeptNaviFirst"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:layout_marginLeft="10dp"
-                        android:background="@drawable/round_rectangle_border"
-                        >
-                        <TextView
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:gravity="center"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="(주)가온아이"
-                            >
-                        </TextView>
-                    </LinearLayout>
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>

@@ -36,10 +36,13 @@ import com.example.bizmekatalk.common.PreferenceManager;
 import com.example.bizmekatalk.fragment.sublayout.SubNaviLayout;
 import com.example.bizmekatalk.items.DeptItem;
 import com.example.bizmekatalk.items.Item;
+import com.example.bizmekatalk.items.NaviItem;
 import com.example.bizmekatalk.items.UserItem;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class OrganAdapter extends CustomAdapter {
 
@@ -107,7 +110,6 @@ public class OrganAdapter extends CustomAdapter {
         }
 
         /// 여기서부터 분기처리
-        //Log.i("jay.DeptListAdapter","typename : "+items.get(position).getType());
         //Log.i("jay.OrganAdapter","items : "+(items.get(position)).toString());
         if("UserItem".equals(items.get(position).getType())){
             //null체크
@@ -131,50 +133,64 @@ public class OrganAdapter extends CustomAdapter {
             holder.tvDeptName.setText(((DeptItem)items.get(position)).getDeptName());
             //Dept에 OnClickListener
             holder.llDeptItem.setOnClickListener(v -> {
-                BizmekaApp.navi.add(((DeptItem) items.get(position)).getDeptId());
-                BizmekaApp.COMPNAME = ((DeptItem) items.get(position)).getDeptName();
 
+                String deptId = ((DeptItem) items.get(position)).getDeptId();
+                String deptName = ((DeptItem) items.get(position)).getDeptName();
+                LinkedList<NaviItem> navi = BizmekaApp.navi;
+                Map<String, List<Item>> deptMap = BizmekaApp.deptMap;
+                Map<String, List<Item>> userMap = BizmekaApp.userMap;
+
+                navi.add( new NaviItem(deptId,deptName) );
+
+                //네비게이션
                 LinearLayout llDeptNavi = ((Activity)context).findViewById(R.id.llDeptNavi);
+
+
                 SubNaviLayout childLayout = new SubNaviLayout(context);
-                childLayout.setTag(BizmekaApp.navi.size());
+
+                childLayout.setTag( navi.size() );
+                int naviSize = navi.size();
                 childLayout.setOnClickListener(v1 -> {
-                    int naviNum = (Integer) childLayout.getTag();
-                    int naviSize = BizmekaApp.navi.size();
-                    llDeptNavi.removeViews(naviNum, naviSize - naviNum);
-                    for(int i = 0 ; i < naviSize - naviNum ; i++){
-                        BizmekaApp.navi.removeLast();
+                    int naviMaxSize = navi.size();
+                    llDeptNavi.removeViews(naviSize, naviMaxSize - naviSize);
+                    for(int i = 0 ; i < naviMaxSize - naviSize ; i++){
+                        navi.removeLast();
                     }
+                    updateTotalMember( userMap.get( navi.getLast().getDeptId() ) );
                     clearData();
-                    addData(BizmekaApp.userMap.get(BizmekaApp.navi.getLast()));
-                    addData(BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()));
+                    addData( userMap.get( navi.getLast().getDeptId() ) );
+                    addData( deptMap.get( navi.getLast().getDeptId() ) );
+
+
+
                     notifyDataSetChanged();
+
                 });
 
                 TextView tvSubDeptName = childLayout.findViewById(R.id.tvSubDeptName);
-                tvSubDeptName.setText(BizmekaApp.COMPNAME);
-                //HorizontalScrollView scDeptNavi = ((Activity)context).findViewById(R.id.scDeptNavi);
-                //scDeptNavi.addView(childLayout);
-                llDeptNavi.addView(childLayout);
+                tvSubDeptName.setText( deptName );
+                llDeptNavi.addView( childLayout );
 
 
                 TextView tvOrganTotalMember = ((Activity)context).findViewById(R.id.tvOrganTotalMember);
 
-                if(BizmekaApp.userMap.get(BizmekaApp.navi.getLast())!=null){
-                    tvOrganTotalMember.setText(String.valueOf(BizmekaApp.userMap.get(BizmekaApp.navi.getLast()).size()));
+                if( userMap.get( navi.getLast().getDeptId() ) != null ){
+                    tvOrganTotalMember.setText( String.valueOf( userMap.get( navi.getLast().getDeptId() ).size() ) );
                 } else {
                     tvOrganTotalMember.setText("0");
                 }
 
-                List<Item> items = BizmekaApp.userMap.get(BizmekaApp.navi.getLast());
+                List<Item> items = userMap.get( navi.getLast().getDeptId() );
                 if(items != null){
                     for(Item item : items){
-                        ((UserItem)item).setDeptName(BizmekaApp.COMPNAME);
+                        ((UserItem)item).setDeptName( deptName );
                     }
                 }
                 clearData();
-                addData(BizmekaApp.userMap.get(BizmekaApp.navi.getLast()));
-                addData(BizmekaApp.deptMap.get(BizmekaApp.navi.getLast()));
+                addData( userMap.get( navi.getLast().getDeptId() ) );
+                addData( deptMap.get( navi.getLast().getDeptId() ) );
                 notifyDataSetChanged();
+
             });
         }
 
@@ -227,6 +243,15 @@ public class OrganAdapter extends CustomAdapter {
                         }
                     }).
                     transform(new CenterCrop()).into(iv);
+        }
+    }
+
+    private void updateTotalMember(List<Item> members) {
+        TextView tvTotalMember = ((Activity)context).findViewById(R.id.tvOrganTotalMember);
+        if (members != null) {
+            tvTotalMember.setText( String.valueOf( members.size() ));
+        } else {
+            tvTotalMember.setText("0");
         }
     }
 
