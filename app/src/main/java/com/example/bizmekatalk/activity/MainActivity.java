@@ -39,14 +39,7 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity{
 
-    private ListView profile_list;
-    private List<UserItem> allItems = new Vector<>();
-    private ProfileListAdapter adapter;
-    private boolean lastitemVisibleFlag = false;
-    private int currentItemCount = 0;
-
     private FragmentManager fragmentManager = getSupportFragmentManager();
-
     private GroupFragment groupFragment = new GroupFragment();
     private ChatFragment chatFragment = new ChatFragment();
     private OrganFragment organFragment = new OrganFragment();
@@ -58,9 +51,6 @@ public class MainActivity extends AppCompatActivity{
 
         BizmekaApp.deptMap = deptListToMap(BizmekaApp.deptList);
         BizmekaApp.userMap = userListToMap(BizmekaApp.userList);
-
-        //setAllDeptInfo(new RequestParamBuilder().getAllDeptInfoParam().build());
-        //setAllUserInfo(new RequestParamBuilder().getAllUserInfoParam().build());
 
         setContentView(R.layout.main_activity);
 
@@ -114,78 +104,6 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
             return true;
-        });
-    }
-
-
-
-    private void scrolledDataUpdate() {
-        profile_list.setOnScrollListener(new ListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastitemVisibleFlag) {
-                    Log.i(PreferenceManager.TAG, "스크롤의 끝 " + currentItemCount);
-                    int i = 0;
-                    while ((adapter.getCount() < allItems.size()) && (i < PreferenceManager.getProfileListStep())) {
-                        adapter.updateItems(allItems.get(currentItemCount));
-                        currentItemCount++;
-                        i++;
-                    }
-                    adapter.notifyDataSetChanged();
-                    //데이터 로드
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                //Flag 변경
-                lastitemVisibleFlag = (totalItemCount > 0) && ((firstVisibleItem + visibleItemCount) >= totalItemCount);
-            }
-        });
-        profile_list.setAdapter(adapter);
-    }
-
-
-    //GetAllUserInfo 요청
-    private void getAllItems(RequestParams params) {
-        //request 설정
-        RequestAPI requestAPI = new RequestAPI();
-        requestAPI.<String>getCall(params).ifPresent(call -> {
-            new WebApiController<String>().request(call, (result) -> {
-                if (result.isSuccess()) {
-                    try {
-                        JSONArray jsonArr = new JSONArray(result.getData());
-                        String tempStr = null;
-                        for (int i = 0; i < jsonArr.length(); i++) {
-                            UserItem item = new UserItem();
-                            String profileImage = jsonArr.getJSONObject(i).getString("profileimage");
-                            String profileImgUrl = PreferenceManager.getUploadUrl() + profileImage;
-                            item.setProfileImage(profileImgUrl);
-                            item.setName(jsonArr.getJSONObject(i).getString("name"));
-                            tempStr = jsonArr.getJSONObject(i).getString("position");
-                            tempStr = ("".equals(tempStr.trim())) ? tempStr : ("(" + tempStr + ")");
-                            item.setPosition(tempStr);
-                            item.setDeptName(jsonArr.getJSONObject(i).getString("job"));
-                            allItems.add(item);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    //ListView 첫 화면에 표시할 정보 Adapter에 전달
-                    int i = 0;
-                    while ((adapter.getCount() < allItems.size()) && (i < PreferenceManager.getProfileListStep())) {
-                        adapter.updateItems(allItems.get(i));
-                        i++;
-                    }
-                    //현재까지 전달한 아이템 카운트
-                    currentItemCount = i;
-
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Log.i(PreferenceManager.TAG, "프로필 업데이트 실패. request : " + result.getError());
-                }
-            });
         });
     }
 

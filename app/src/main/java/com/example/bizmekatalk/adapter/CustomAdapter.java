@@ -11,10 +11,10 @@ public abstract class CustomAdapter extends BaseAdapter {
 
     protected List<Item> items = new ArrayList<>();
 
-    public abstract void setData(List<Item> items);
+    public abstract void setItems(List<Item> items);
 
-    public abstract void addData(List<Item> items);
+    public abstract void addItems(List<Item> items);
 
-    public abstract void clearData();
+    public abstract void clearItems();
 
 }
