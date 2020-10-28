@@ -15,7 +15,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.example.bizmekatalk.R;
-import com.example.bizmekatalk.activity.BizmekaApp;
+import com.example.bizmekatalk.activity.Bizmeka;
 import com.example.bizmekatalk.adapter.OrganAdapter;
 
 import com.example.bizmekatalk.databinding.OrganFragmentBinding;
@@ -25,25 +25,23 @@ import com.example.bizmekatalk.items.Item;
 import com.example.bizmekatalk.items.NaviItem;
 import com.example.bizmekatalk.items.UserItem;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrganFragment extends Fragment {
     private OrganAdapter adapter;
     private OrganFragmentBinding binding;
-
-    private LinkedList<NaviItem> navi;
-    private List<Item> deptList;
-    private List<Item> userList;
+    private List<Item> deptLeafList;
+    private List<Item> userLeafList;
 
     private boolean searchFlag;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        initData(context);
-        adapter.updateItems(userList, deptList);
+        initData();
+        adapter = new OrganAdapter(context);
+        adapter.updateItems(userLeafList, deptLeafList);
     }
 
 
@@ -51,10 +49,10 @@ public class OrganFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.organ_fragment, container, false);
-        for( int i = 0 ; i < navi.size() ; i++){
-            setDeptNavigationView( i, navi.get(i).getDeptName() );
+        for(int i = 0; i < Bizmeka.navi.size() ; i++){
+            setDeptNavigationView( i, Bizmeka.navi.get(i).getDeptName() );
         }
-        setNumberOfUsers(userList);
+        setNumberOfUsers(userLeafList);
         setOnDeptBackBotton();
         setSearchTextListener();
         binding.lvDeptList.setAdapter(adapter);
@@ -62,17 +60,28 @@ public class OrganFragment extends Fragment {
     }
 
 
-
-    private void initData(@NonNull Context context) {
-        adapter = new OrganAdapter(context);
-        navi = BizmekaApp.navi;
-        resetLists();
-        setUserDeptName( navi.getLast().getDeptName() );
+    private void initData() {
+        allItemListToMap();
+        resetItemLeafList();
+        setUserDeptName( Bizmeka.navi.getLast().getDeptName() );
     }
 
+
+    private void allItemListToMap() {
+        Bizmeka.deptMap = Bizmeka.deptList.stream().collect(Collectors.groupingBy(item -> ((DeptItem)item).getParentDeptId()));
+        Bizmeka.userMap = Bizmeka.userList.stream().collect(Collectors.groupingBy(item -> ((UserItem)item).getDeptId()));
+    }
+
+
+    private void resetItemLeafList(){
+        deptLeafList = Bizmeka.deptMap.get( Bizmeka.navi.getLast().getDeptId() );
+        userLeafList = Bizmeka.userMap.get( Bizmeka.navi.getLast().getDeptId() );
+    }
+
+
     private void setUserDeptName(String userDeptName) {
-        if(userList != null){
-            userList.stream().forEach(item->((UserItem)item).setDeptName( userDeptName ));
+        if(userLeafList != null){
+            userLeafList.stream().forEach(item->((UserItem)item).setDeptName( userDeptName ));
         }
     }
 
@@ -88,10 +97,10 @@ public class OrganFragment extends Fragment {
 
     private void setOnDeptBackBotton() {
         binding.btnDeptBack.setOnClickListener(v -> {
-            int naviPosition = navi.size() - 1;
+            int naviPosition = Bizmeka.navi.size() - 1;
             clearNavi( naviPosition, binding.llDeptNavi );
-            setNumberOfUsers(userList);
-            adapter.updateItems(userList, deptList);
+            setNumberOfUsers(userLeafList);
+            adapter.updateItems(userLeafList, deptLeafList);
         });
     }
 
@@ -106,13 +115,13 @@ public class OrganFragment extends Fragment {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                List<Item> searchedUserList = BizmekaApp.userList.stream().filter(item -> ((UserItem)item).getName().contains(newText)).collect(Collectors.toList());
-                List<Item> searchedDeptList = BizmekaApp.deptList.stream().filter(item -> ((DeptItem)item).getDeptName().contains(newText)).collect(Collectors.toList());
+                List<Item> searchedUserList = Bizmeka.userList.stream().filter(item -> ((UserItem)item).getName().contains(newText)).collect(Collectors.toList());
+                List<Item> searchedDeptList = Bizmeka.deptList.stream().filter(item -> ((DeptItem)item).getDeptName().contains(newText)).collect(Collectors.toList());
                 if("".equals(newText)){
                     if(searchFlag){
                         clearNavi(1, binding.llDeptNavi );
-                        adapter.updateItems(userList, deptList);
-                        setNumberOfUsers(userList);
+                        adapter.updateItems(userLeafList, deptLeafList);
+                        setNumberOfUsers(userLeafList);
                     }
                 } else{
                     searchFlag = true;
@@ -127,33 +136,33 @@ public class OrganFragment extends Fragment {
 
     private void setDeptNavigationView(int position, String deptName) {
         SubNaviLayout childLayout = new SubNaviLayout( this.getContext() );
-        int naviNum = position + 1;
         childLayout.setOnClickListener(v1 -> {
-            clearNavi( naviNum, binding.llDeptNavi );
-            setNumberOfUsers(userList);
-            adapter.updateItems(userList, deptList);
+            clearNavi( position + 1, binding.llDeptNavi );
+            setNumberOfUsers(userLeafList);
+            adapter.updateItems(userLeafList, deptLeafList);
         });
 
         TextView tvSubDeptName = childLayout.findViewById(R.id.tvSubDeptName);
-        tvSubDeptName.setText( deptName );
+        if(tvSubDeptName != null){
+            tvSubDeptName.setText( deptName );
+        }
         binding.llDeptNavi.addView( childLayout );
     }
 
 
     private void clearNavi(int startNum ,LinearLayout ll) {
-        if(navi.size()>1){
-            int endNum = navi.size();
-            ll.removeViews(startNum,  endNum - startNum);
-            for(int i = 0 ; i <  endNum - startNum ; i++){
-                navi.removeLast();
+        if(Bizmeka.navi.size()>1){
+            int endNum = Bizmeka.navi.size();
+            if( ll != null ){
+                ll.removeViews(startNum,  endNum - startNum);
             }
-            resetLists();
+            for(int i = 0 ; i <  endNum - startNum ; i++){
+                Bizmeka.navi.removeLast();
+            }
+            resetItemLeafList();
         }
     }
 
 
-    private void resetLists(){
-        deptList = BizmekaApp.deptMap.get( navi.getLast().getDeptId() );
-        userList = BizmekaApp.userMap.get( navi.getLast().getDeptId() );
-    }
+
 }

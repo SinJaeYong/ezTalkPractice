@@ -16,7 +16,7 @@ import java.util.Map;
 
 import lombok.Getter;
 
-public class BizmekaApp extends Application {
+public class Bizmeka extends Application {
 
     private static Context mContext;
 
@@ -36,12 +36,13 @@ public class BizmekaApp extends Application {
     public void onCreate(){
         super.onCreate();
         mContext = getApplicationContext();
-        //navi.add("s907000");
-        navi.add( new NaviItem("s907000","(주)가온아이") );
+        Bizmeka.navi.add( new NaviItem("s907000","(주)가온아이") );
+
     }
 
     public static Context getAppContext(){
         return mContext;
     }
+
 
 }

@@ -129,7 +129,7 @@ public class PinRegisterActivity extends AppCompatActivity {
                         JSONArray jsonArr = new JSONArray(result.getData());
                         for(int i = 0 ; i < jsonArr.length() ; i++){
                             JSONObject json = new JSONObject(jsonArr.get(i).toString());
-                            BizmekaApp.deptList.add(new DeptItem(json));
+                            Bizmeka.deptList.add(new DeptItem(json));
                         }
                         Message message = mHandler.obtainMessage(MSG_DEPT_FLAG);
                         mHandler.sendMessage(message);
@@ -153,7 +153,7 @@ public class PinRegisterActivity extends AppCompatActivity {
                         JSONArray jsonArr = new JSONArray(result.getData());
                         for(int i = 0 ; i < jsonArr.length() ; i++){
                             JSONObject json = new JSONObject(jsonArr.get(i).toString());
-                            BizmekaApp.userList.add(new UserItem(json));
+                            Bizmeka.userList.add(new UserItem(json));
                         }
                         Message message = mHandler.obtainMessage(MSG_USER_FLAG);
                         mHandler.sendMessage(message);

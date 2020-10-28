@@ -23,7 +23,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.bizmekatalk.R;
-import com.example.bizmekatalk.activity.BizmekaApp;
+import com.example.bizmekatalk.activity.Bizmeka;
 import com.example.bizmekatalk.activity.UserProfileActivity;
 import com.example.bizmekatalk.common.PreferenceManager;
 import com.example.bizmekatalk.fragment.sublayout.SubNaviLayout;
@@ -33,45 +33,42 @@ import com.example.bizmekatalk.items.NaviItem;
 import com.example.bizmekatalk.items.UserItem;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class OrganAdapter extends CustomAdapter {
 
 
     private Context context;
 
-    private LinkedList<NaviItem> navi;
-    private List<Item> deptList;
-    private List<Item> userList;
+    private List<Item> deptLeafList;
+    private List<Item> userLeafList;
 
     public OrganAdapter(Context context){
         this.context = context;
-        initData();
+        resetItemLeafList();
     }
 
     @Override
-    public void setItems(List<Item> items) {
+    public void setItems(List items) {
         if(items != null){
             this.items = new ArrayList<>(items);
         }
     }
     @Override
-    public void addItems(List<Item> items) {
+    public void addItems( List items ) {
         if(items != null){
             this.items.addAll(items);
         }
     }
     @Override
-    public void clearItems(){
-        this.items.clear();
-    }
+    public void clearItems(){ this.items.clear(); }
 
-    public void updateItems(List<Item>...items) {
+    public void updateItems(List...itemsArr) {
         clearItems();
-        for(List<Item> itemList : items){
-            addItems( itemList );
+        if(itemsArr != null){
+            for(List items : itemsArr){
+                addItems( items );
+            }
         }
         notifyDataSetChanged();
     }
@@ -94,23 +91,23 @@ public class OrganAdapter extends CustomAdapter {
 
     @Override
     public View getView(int position, View itemView, ViewGroup viewGroup) {
+
         Holder holder = new Holder();
         if (itemView == null) {
             LayoutInflater inflater = (LayoutInflater) viewGroup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             itemView = inflater.inflate(R.layout.organ_item, viewGroup, false);
-            initHolder(itemView, holder);
+            itemView.setTag( initHolder(itemView, holder) );
         } else {
             holder = (Holder) itemView.getTag();
         }
 
         //UserItem Or DeptItem 분기점
         if("UserItem".equals(items.get(position).getType())){
-            //null체크 필요
             setUserItemHolder(position, holder);
         } else {
-            //null 체크 필요
             setDeptItemHolder(position, holder);
         }
+
         return itemView;
     }
 
@@ -119,45 +116,51 @@ public class OrganAdapter extends CustomAdapter {
 
 
     private void setDeptItemHolder(int position, Holder holder) {
-        holder.llUserItem.setVisibility(View.GONE);
-        holder.llDeptItem.setVisibility(View.VISIBLE);
-        holder.tvDeptName.setText(((DeptItem)items.get(position)).getDeptName());
-        //Dept에 OnClickListener
-        holder.llDeptItem.setOnClickListener(v -> {
+        if( holder.llUserItem != null ) holder.llUserItem.setVisibility(View.GONE);
+        if( holder.tvDeptName != null ) holder.tvDeptName.setText(((DeptItem)items.get(position)).getDeptName());
+        if( holder.llDeptItem != null ) {
+            holder.llDeptItem.setVisibility(View.VISIBLE);
+            holder.llDeptItem.setOnClickListener(v -> {
+                String deptId = ((DeptItem) items.get(position)).getDeptId();
+                String deptName = ((DeptItem) items.get(position)).getDeptName();
 
-            String deptId = ((DeptItem) items.get(position)).getDeptId();
-            String deptName = ((DeptItem) items.get(position)).getDeptName();
+                Bizmeka.navi.add( new NaviItem(deptId,deptName) );
+                resetItemLeafList();
+                int naviPosition = Bizmeka.navi.size();
+                setDeptNavigationView(naviPosition, deptName);
+                setNumberOfUsers(userLeafList);
+                setUserDeptName( deptName );
+                updateItems(userLeafList, deptLeafList);
+
+            });
+
+        }
 
 
-            navi.add( new NaviItem(deptId,deptName) );
-            resetLists();
-            int naviPosition = navi.size();
-            setDeptNavigationView(naviPosition, deptName);
-            setNumberOfUsers( userList );
-            setUserDeptName( deptName );
-            updateItems( userList, deptList );
 
-        });
     }
 
 
     private void setUserItemHolder(int position, Holder holder) {
-        holder.llDeptItem.setVisibility(View.GONE);
-        holder.llUserItem.setVisibility(View.VISIBLE);
-        holder.tvUserDeptName.setText(((UserItem)items.get(position)).getDeptName());
-        holder.tvUserName.setText(((UserItem)items.get(position)).getName());
-        String imgUrl = ((UserItem)items.get(position)).getProfileImage();
-        setProfileImg(holder.ivProfileImage,imgUrl,context);
-
-        holder.llUserItem.setOnClickListener(v -> {
-            Intent intent = new Intent(context, UserProfileActivity.class);
-            intent.putExtra("parcel",((UserItem)items.get(position)));
-            context.startActivity(intent);
-        });
+        if ( holder.llDeptItem != null) holder.llDeptItem.setVisibility(View.GONE);
+        if ( holder.llUserItem != null) holder.llUserItem.setVisibility(View.VISIBLE);
+        if ( holder.tvUserDeptName != null) holder.tvUserDeptName.setText(((UserItem)items.get(position)).getDeptName());
+        if ( holder.tvUserName != null) holder.tvUserName.setText(((UserItem)items.get(position)).getName());
+        if ( holder.ivProfileImage != null){
+            String imgUrl = ((UserItem)items.get(position)).getProfileImage();
+            setProfileImg(holder.ivProfileImage,imgUrl,context);
+        }
+        if ( holder.llUserItem != null) {
+            holder.llUserItem.setOnClickListener(v -> {
+                Intent intent = new Intent(context, UserProfileActivity.class);
+                intent.putExtra("parcel",((UserItem)items.get(position)));
+                context.startActivity(intent);
+            });
+        }
     }
 
 
-    private void initHolder(View itemView, Holder holder) {
+    private Holder initHolder(View itemView, Holder holder) {
         holder.llUserItem = itemView.findViewById(R.id.llUserItem);
         holder.tvUserName = itemView.findViewById(R.id.tvUserName);
         holder.tvUserDeptName= itemView.findViewById(R.id.tvUserDeptName);
@@ -165,7 +168,7 @@ public class OrganAdapter extends CustomAdapter {
         holder.llDeptItem = itemView.findViewById(R.id.llDeptItem);
         holder.tvDeptName = itemView.findViewById(R.id.tvDeptName);
         holder.ivIsLeaf = itemView.findViewById(R.id.ivIsLeaf);
-        itemView.setTag(holder);
+        return holder;
     }
 
 
@@ -174,36 +177,36 @@ public class OrganAdapter extends CustomAdapter {
         SubNaviLayout childLayout = new SubNaviLayout(context);
         childLayout.setOnClickListener(v1 -> {
             clearNavi( position, llDeptNavi );
-            updateItems( userList, deptList );
-            setNumberOfUsers( userList );
+            updateItems(userLeafList, deptLeafList);
+            setNumberOfUsers(userLeafList);
         });
         TextView tvSubDeptName = childLayout.findViewById(R.id.tvSubDeptName);
-        tvSubDeptName.setText( deptName );
-        llDeptNavi.addView( childLayout );
+        if( tvSubDeptName != null ) tvSubDeptName.setText( deptName );
+        if( llDeptNavi != null) llDeptNavi.addView( childLayout );
     }
 
 
     private void setProfileImg(ImageView iv, String imgUrl, Context context){
 
+        //이미지 아웃라인 적용
         if(iv!=null){
             GradientDrawable drawable=(GradientDrawable)context.getDrawable(R.drawable.profile_background_rounding);
             iv.setBackground(drawable);
             iv.setClipToOutline(true);
         }
 
-        final Handler handler = new Handler(Looper.myLooper());
 
-        if(PreferenceManager.getUploadUrl().equals(imgUrl)){
+        //이미지 표시
+        if( PreferenceManager.getUploadUrl().equals(imgUrl) || imgUrl == null || "".equals(imgUrl) ){
             Glide.with(context).load(R.drawable.no_image).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(iv);
         }else {
             Glide.with(context).load(imgUrl).
                     listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            handler.post(() -> Glide.with(context).load(R.drawable.no_image).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(iv));
+                            new Handler(Looper.myLooper()).post(() -> Glide.with(context).load(R.drawable.no_image).apply(RequestOptions.circleCropTransform()).transform(new CenterCrop()).into(iv));
                             return false;
                         }
-
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             return false;
@@ -214,7 +217,7 @@ public class OrganAdapter extends CustomAdapter {
     }
 
 
-    private void setNumberOfUsers(List<Item> userList) {
+    private void setNumberOfUsers(List userList) {
         TextView tvTotalMember = ((Activity)context).findViewById(R.id.tvOrganTotalMember);
         if (userList != null) {
             tvTotalMember.setText( String.valueOf( userList.size() ));
@@ -224,35 +227,28 @@ public class OrganAdapter extends CustomAdapter {
     }
 
 
-    private void initData(){
-        navi = BizmekaApp.navi;
-        resetLists();
-        //setUserDeptName( navi.getLast().getDeptName() );
-    }
-
-
-    private void resetLists(){
-        deptList = BizmekaApp.deptMap.get( navi.getLast().getDeptId() );
-        userList = BizmekaApp.userMap.get( navi.getLast().getDeptId() );
+    private void resetItemLeafList(){
+        deptLeafList = Bizmeka.deptMap.get( Bizmeka.navi.getLast().getDeptId() );
+        userLeafList = Bizmeka.userMap.get( Bizmeka.navi.getLast().getDeptId() );
     }
 
 
     private void setUserDeptName(String userDeptName) {
-        if(userList != null){
-            userList.stream().forEach(item->((UserItem)item).setDeptName( userDeptName ));
+        if(Bizmeka.userMap.get( Bizmeka.navi.getLast().getDeptId() ) != null){
+            Bizmeka.userMap.get( Bizmeka.navi.getLast().getDeptId() ).stream().forEach(item->((UserItem)item).setDeptName( userDeptName ));
         }
     }
 
 
     private void clearNavi(int startNum ,LinearLayout ll) {
-        if(navi.size()>1){
-            int endNum = navi.size();
+        if(Bizmeka.navi.size()>1){
+            int endNum = Bizmeka.navi.size();
             ll.removeViews(startNum,  endNum - startNum);
             for(int i = 0 ; i <  endNum - startNum ; i++){
-                navi.removeLast();
+                Bizmeka.navi.removeLast();
             }
-            resetLists();
         }
+        resetItemLeafList();
     }
 
 

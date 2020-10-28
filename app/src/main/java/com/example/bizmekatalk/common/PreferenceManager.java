@@ -3,7 +3,7 @@ package com.example.bizmekatalk.common;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.bizmekatalk.activity.BizmekaApp;
+import com.example.bizmekatalk.activity.Bizmeka;
 
 public class PreferenceManager {
 
@@ -91,7 +91,7 @@ public class PreferenceManager {
      */
 
     public static void setString(String key, String value) {
-        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
+        SharedPreferences prefs = getPreferences(Bizmeka.getAppContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
         editor.commit();
@@ -147,7 +147,7 @@ public class PreferenceManager {
      */
 
     public static String getString(String key) {
-        return getPreferences(BizmekaApp.getAppContext()).getString(key, DEFAULT_VALUE_STRING);
+        return getPreferences(Bizmeka.getAppContext()).getString(key, DEFAULT_VALUE_STRING);
     }
 
 
@@ -162,7 +162,7 @@ public class PreferenceManager {
      */
 
     public static int getInt(String key) {
-        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
+        SharedPreferences prefs = getPreferences(Bizmeka.getAppContext());
         int value = prefs.getInt(key, DEFAULT_VALUE_INT);
         return value;
     }
@@ -178,7 +178,7 @@ public class PreferenceManager {
 
     public static float getFloat(String key) {
 
-        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
+        SharedPreferences prefs = getPreferences(Bizmeka.getAppContext());
         float value = prefs.getFloat(key, DEFAULT_VALUE_FLOAT);
         return value;
 
@@ -192,7 +192,7 @@ public class PreferenceManager {
 
     public static void removeKey(String key) {
 
-        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
+        SharedPreferences prefs = getPreferences(Bizmeka.getAppContext());
         SharedPreferences.Editor edit = prefs.edit();
         edit.remove(key);
         edit.commit();
@@ -207,7 +207,7 @@ public class PreferenceManager {
 
     public static void clear() {
 
-        SharedPreferences prefs = getPreferences(BizmekaApp.getAppContext());
+        SharedPreferences prefs = getPreferences(Bizmeka.getAppContext());
         SharedPreferences.Editor edit = prefs.edit();
         edit.clear();
         edit.commit();

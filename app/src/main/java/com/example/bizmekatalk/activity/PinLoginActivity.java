@@ -34,8 +34,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 public class PinLoginActivity extends AppCompatActivity {
 
@@ -83,7 +81,9 @@ public class PinLoginActivity extends AppCompatActivity {
             if(pinPassList.size()>0){
                 //핀 Dot 이미지 변경 및 LinkedList에 핀값 삭제
                 pinPassList.removeLast();
-                pinDots.get(pinPassList.size()).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
+                if(pinDots.get(pinPassList.size()) != null){
+                    pinDots.get(pinPassList.size()).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_black,null));
+                }
             }
         });
 
@@ -102,10 +102,12 @@ public class PinLoginActivity extends AppCompatActivity {
             TextView pin = binding.pinButtons.pinGrid.findViewWithTag("pin"+String.valueOf(i));
             final int pinNumber = i;
             //숫자 버튼 클릭시
-            pin.setOnClickListener(view -> {
-                //핀 Dot 이미지 변경 및 LinkedList에 핀값 저장
-                setPins(pinNumber,PreferenceManager.getPinMaxCount());
-            });
+            if( pin != null ){
+                pin.setOnClickListener(view -> {
+                    //핀 Dot 이미지 변경 및 LinkedList에 핀값 저장
+                    setPins(pinNumber,PreferenceManager.getPinMaxCount());
+                });
+            }
             pinBtns.add(pin);
         }
 
@@ -130,7 +132,9 @@ public class PinLoginActivity extends AppCompatActivity {
         if(pinLock) return;
 
         pinPassList.addLast(pinNumber);
-        pinDots.get(pinPassList.size()-1).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_blue,null));
+        if( pinDots.get(pinPassList.size()-1) != null){
+            pinDots.get(pinPassList.size()-1).setImageDrawable(getResources().getDrawable(R.drawable.shape_round_blue,null));
+        }
 
         if(pinPassList.size() == maxCount) {
             pinLock = true;
@@ -142,7 +146,6 @@ public class PinLoginActivity extends AppCompatActivity {
                 Log.i(PreferenceManager.TAG,"핀 로그인 입력 오류");
                 new Handler(Looper.myLooper()).postDelayed(() -> { clearPin(); pinLock = false; }, 500);
             }
-
 
             //moveToMain();
         }
@@ -163,16 +166,13 @@ public class PinLoginActivity extends AppCompatActivity {
 
         //사용자 핀
         String pass = PreferenceManager.getString(PreferenceManager.getPinKey());
-
         //입력 핀
         StringBuffer buffer = new StringBuffer();
         pinPassList.stream().forEach(i -> buffer.append(i));
-        return pass.equals(buffer.toString());
-
+        return buffer.toString().equals( pass );
     }
 
     private void moveToMain(){
-
         progressDialog = new ProgressDialog(this);
         progressDialog.show();
         mHandler = new Handler(Looper.myLooper()){
@@ -185,7 +185,6 @@ public class PinLoginActivity extends AppCompatActivity {
                 switch (msg.what){
                     case MSG_USER_FLAG:
                         userFlag = true;
-                        Log.i("jay.PinLoginActivity","userFlag");
                         break;
                     case MSG_DEPT_FLAG:
                         deptFlag = true;
@@ -211,13 +210,12 @@ public class PinLoginActivity extends AppCompatActivity {
     private void setAllDeptInfo(RequestParams params) {
         new RequestAPI().<String>getCall(params).ifPresent(call->{
             new WebApiController<String>().request(call,(result)->{
-                Log.i("jay.PinLoginActivity","setAllDeptInfo");
                 if(result.isSuccess()){
                     try {
                         JSONArray jsonArr = new JSONArray(result.getData());
                         for(int i = 0 ; i < jsonArr.length() ; i++){
                             JSONObject json = new JSONObject(jsonArr.get(i).toString());
-                            BizmekaApp.deptList.add(new DeptItem(json));
+                            Bizmeka.deptList.add(new DeptItem(json));
                         }
                         Message message = mHandler.obtainMessage(MSG_DEPT_FLAG);
                         mHandler.sendMessage(message);
@@ -241,7 +239,7 @@ public class PinLoginActivity extends AppCompatActivity {
                         JSONArray jsonArr = new JSONArray(result.getData());
                         for(int i = 0 ; i < jsonArr.length() ; i++){
                             JSONObject json = new JSONObject(jsonArr.get(i).toString());
-                            BizmekaApp.userList.add(new UserItem(json));
+                            Bizmeka.userList.add(new UserItem(json));
                         }
                         Message message = mHandler.obtainMessage(MSG_USER_FLAG);
                         mHandler.sendMessage(message);
